@@ -6,7 +6,9 @@
 
 Players choose objects from a catalogue, place them in a three-dimensional world and then use what they built. The UI therefore spans catalogue navigation, placement feedback, HUD/input modes, world interactions and specialised panels. A processing station exposes recipes and a queue; a storage box exposes containers and transfer actions.
 
-The work connected gameplay implementation with these interfaces. A useful boundary was to share framework services and state contracts while keeping object-specific actions explicit. A generic frame alone cannot explain whether a player is positioning an object, producing materials or transferring an item.
+I initiated the building system and worked across gameplay and its associated UI. I also developed and maintained constructed-object interactions and panels. The key responsibility was connecting those layers into usable features, using the team's shared infrastructure.
+
+Three decisions organise this case: derive controls from the current interaction context; give crafting requirements meaningful actions; share presentation without hiding object-specific commands.
 
 ## 1. From catalogue selection to placement
 
@@ -22,13 +24,19 @@ For PC actions, `CheckBuildActionValid` checks three different facts: PC interac
 
 **Result and trade-off.** The catalogue, operation controls and world preview have an inspectable contract. The bitmask is compact and cheap to compare, but requires stable enum definitions on both sides and is not a full state model for every possible mode. UI mode checks and native validation remain complementary.
 
-## 2. Workbench interaction opens a crafting interface
+## 2. Equipment crafting: one action area, several meanings
 
-The supplied equipment-workbench image is a crafting screen, not an equipment-slot view. Equipment and consumable workbenches use distinct model/frame paths. Their included integration methods retain object context, start a leave-distance check with a small margin, bind the panel and clean up on exit. [Implementation and screenshots](WORKBENCH_INTERACTIONS.md).
+**Problem.** A player may be choosing a recipe, waiting for production, dealing with a paused job, collecting output or resolving a requirement. A generic enabled/disabled button loses the meaning of those states.
+
+**Implementation.** After opening with the workbench's world context, the product widget evaluates existing production before new-recipe requirements. Level and material failures remain actionable: they lead to workbench upgrade guidance or recipe tracking. A carry limit disables the action and is checked again by the model. Product clicks route through the panel's confirmation policy and model checks before native execution.
+
+The execution path distinguishes native queue-backed work from local progress-driven crafting. The first dispatches a request and hides the panel; the second starts progress and updates controls. Production notifications and a scoped state poll update the action area from native job state. Collection is a separate request, not a consequence of a local timer finishing.
+
+**Result and trade-off.** The action area explains what is possible and provides a useful next step when requirements are missing. It fits existing widgets and gameplay services, but spreads derived state across product, panel and model. The detailed chapter follows the actual methods and discusses this maintenance cost. [Workbench state and command path](WORKBENCH_INTERACTIONS.md).
 
 ## 3. A processing station with a meaningful primary action
 
-This supporting code example is the semi-finished-goods production panel. No screenshot of that panel is supplied; the equipment and crafting workbench images are not used as evidence of its queue UI.
+This code-only extension covers the separate semi-finished-goods production panel.
 
 **Problem.** A recipe may exist but be locked, hidden by conditions, impossible at the current station level, missing materials or blocked by queue capacity. Making every blocked state look the same leaves players unsure what to do next.
 
@@ -48,7 +56,7 @@ Queue rows show native work state and locally advance the displayed workload whi
 
 **Implementation.** `BoxModel` keeps the current box identity and dispatches operations. `StorageBoxFrame` composes box, bag and other inventory views. Its periodic range check hides the frame when the player leaves the interaction area; destruction requests exit from the box interaction.
 
-Native `OnBoxDragMoveItem` distinguishes four routes: reorder inside the box, move out, move in, and move between the player's own containers. Both drag/drop and fast-deposit routes converge on `MoveToStorageBox`, which applies a common eligibility check and reports a UI error before dispatching a request. The included server quick-withdraw excerpt also checks that the box permits withdrawal and that a personal box belongs to the requesting player. This is not a complete server-security audit.
+Native `OnBoxDragMoveItem` distinguishes four routes: reorder inside the box, move out, move in, and move between the player's own containers. Both drag/drop and fast-deposit routes converge on `MoveToStorageBox`, which applies a common eligibility check and reports a UI error before dispatching a request. The included server quick-withdraw excerpt also checks that the box permits withdrawal and that a personal box belongs to the requesting player.
 
 The storage view refreshes from container data, filters box-update notifications by GUID and retains existing slot-data objects when capacity has not changed. That last choice is a concrete optimisation of the refresh path, examined in [Performance](PERFORMANCE.md).
 
@@ -66,6 +74,8 @@ The storage view refreshes from container data, filters box-update notifications
 
 The shared Lua/UMG framework was maintained collaboratively by the team. Widget names, child behaviours, event bindings, frame creation and list-data adapters form the integration contract. Designers can iterate on recipe conditions and feedback; UI artists can work on layout and animation; engineering keeps world identity, input state and request semantics consistent. Specialised panels reuse those facilities without losing their own lifecycle and action rules.
 
-## What the case establishes
+## Outcome
 
-The selected code demonstrates cross-layer feature implementation, input-context checks, rule-driven controls, world-bound panel lifetimes and selective refresh work. The accompanying tests exercise specific paths in isolation. No measured frame-time reduction, historical bug-count reduction or complete in-engine validation is claimed.
+The work connected a building catalogue, contextual world controls and usable constructed objects. The code makes the important boundaries traceable: an input becomes an intent, an intent is checked against the current context, and the UI reflects state from the responsible gameplay system. Storage and weapon-rack examples show where shared presentation is useful and where commands must remain specific.
+
+[Verification results](TESTING.md) separate tested excerpt behaviour from full-runtime checks. [Dependencies](DEPENDENCIES.md) defines the source-reading scope.

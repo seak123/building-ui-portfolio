@@ -25,7 +25,11 @@ This case preserves selected feature code, not a complete game build. C++ header
 
 The rack uses hangable-item configuration and bag/shortcut container lookups. Its RPC server implementation is external. The general dispatcher delivers `WeaponShelf_OpenHangView(PieceID, Guid, InteractionID)`; the adapter is included, not the full dispatcher. Other common-selector keys remain as shared-module context.
 
-The equipment/crafting workbench model excerpts depend on `WorkBenchExport`, `EquipMadeExport`, table services and actual panel behaviours. Selected opening and cleanup methods are included; product rendering, progression-tree construction, full crafting execution and widget binaries are external. The two screenshots do not establish an exact source-build match.
+The equipment-workbench excerpts include opening/cleanup, product action derivation, panel routing, guidance, model checks and the start/interruption boundary. `WorkBenchExport`, `EquipMadeExport`, recipe tracking, upgrade guidance, tables and actual widget behaviours remain external. Product population, progression-tree construction, complete success handling, native execution and server validation are omitted.
+
+`WorkBenchProduct` keeps its binding table: the make/cancel/enhance/repair controls share `OnBtnMake`; native-production cancel and collect use distinct handlers. The retained make switcher assignments are 0 for the ordinary action, 1 for local-progress stop, 4 for native production/cancel and 5 for collect. Visual layout, localisation and the exact historical screenshot build remain separate media/runtime concerns.
+
+`PalWorkBenchModel` includes the consumable-workbench opening and cleanup paths, not the equipment product's action implementation.
 
 ## Omitted functions
 
@@ -33,4 +37,6 @@ The equipment/crafting workbench model excerpts depend on `WorkBenchExport`, `Eq
 
 ## Editing scope
 
-The public case contains selected source methods and newly written explanations/tests. Whole-line development comments and simple diagnostic prints are removed during preparation. Displayed-file checksums are local integrity checks only.
+The public case contains selected source methods and newly written explanations/tests. Development annotations and simple diagnostic prints are removed during preparation. Displayed-file checksums are local integrity checks only.
+
+The [implementation map](source-manifest.json) lists retained methods and omitted bodies. [Verification](TESTING.md) records tests and full-runtime validation targets; [media notes](../media/README.md) distinguish captured states from transitions.

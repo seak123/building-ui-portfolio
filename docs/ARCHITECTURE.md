@@ -37,9 +37,13 @@ The existing object interaction sends `LogicEvent_Box_Open(ConfigId, Guid)`. `Bo
 
 The panel's 0.2-second range check is a client presentation rule, not server authority. A native request return or Lua `true` indicating dispatch is not acknowledgement of a completed inventory mutation. Shared container-update events supply the resulting state.
 
-## Workbench opening contract
+## Workbench state and command contract
 
-`WorkBenchModel` and `PalWorkBenchModel` handle distinct world-workbench interfaces. Opening passes world context into the model, starts a named leave-distance check and binds the asynchronous frame. The close threshold includes a 30-unit margin beyond interaction range. [Integration and boundaries](WORKBENCH_INTERACTIONS.md).
+`WorkBenchModel` and `PalWorkBenchModel` handle distinct world-workbench interfaces. Opening establishes object context, starts a named leave check and binds the asynchronous frame.
+
+For equipment crafting, `WorkBenchProduct` combines native production queries with eligibility fields held by `WorkBenchModel`. It maps them to guidance, tracking, start, cancel or collect actions. `WorkBenchPanel` handles mode-specific dispatch and confirmation policy; `WorkBenchModel` handles action checks and the local-progress/native-queue split. Product-population methods outside the excerpt supply the eligibility fields. This shared mutable state is a coupling to understand, not a fully separated MVVM design.
+
+Production notifications and a scoped one-second state poll re-evaluate the product action. Native data determines collectability. [State, actions and lifecycle](WORKBENCH_INTERACTIONS.md).
 
 ## Weapon-rack selection contract
 

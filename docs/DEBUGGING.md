@@ -36,7 +36,19 @@ The weapon rack handles matching-object occupancy notifications, but a client cl
 
 ## A workbench panel should not immediately close at the interaction boundary
 
-The selected equipment/crafting workbench opening methods use the interaction distance plus a 30-unit leave margin. Test opening at the boundary, small movement, moving fully away and cleanup. This applies to a world-object crafting screen, not the character equipment slots. [Workbench example](WORKBENCH_INTERACTIONS.md).
+The selected equipment/crafting workbench opening methods use the interaction distance plus a 30-unit leave margin. Test opening at the boundary, small movement, moving fully away and cleanup. [Workbench example](WORKBENCH_INTERACTIONS.md).
+
+## Crafting confirmation can outlive the conditions that opened it
+
+The retained `OnMakeClicked` checks eligibility and current action before opening a confirmation box. Its confirmation callback then calls `func_MyMakeStart` directly, without repeating those checks. Inventory, action state, selected recipe or workbench context may change during that interval.
+
+The focused test verifies that confirmation defers dispatch; it does not establish safety under changed state. In the full runtime, trace the selected make/material IDs and object context through confirmation and native validation. Rechecking conditions or binding the confirmation to an immutable intent are potential hardening options, not changes delivered by this portfolio.
+
+## Production-action refresh has two sources of state
+
+The equipment widget reads native production state before evaluating the model's selected-recipe conditions. It also polls while producing. Trace both sources when the visible action seems wrong: current make ID, object GUID, producing/paused/collectable flags and model eligibility.
+
+Test a job finishing after materials change, collection while a new recipe is selected, and a queued timer/event during panel close. The controlled tests cover method precedence and explicit timer replacement; actual scope disposal, cross-object event delivery and backend validation remain runtime contracts.
 
 ## Remaining lifecycle checks
 

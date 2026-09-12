@@ -2,6 +2,8 @@
 
 [Overview](../README.md) · [Architecture](ARCHITECTURE.md)
 
+For a short review, read **steps 2–3 for input/placement**, then **step 7 for the equipment-workbench action path**. Storage and the shared selector provide supporting examples.
+
 ## 1. Select an object
 
 [BuildSpaceListWidget](../Content/Lua/GameLogics/BuildSpace/BuildSpaceListWidget.lua) consumes menu/catalogue events and populates lists. [BuildSpaceUnitItem](../Content/Lua/GameLogics/BuildSpace/BuildSpaceUnitItem.lua) represents a selectable entry. In [BuildSpaceModel](../Content/Lua/GameLogics/BuildSpace/BuildSpaceModel.lua), follow `SetBuildSpaceMenuSelected`, `SetBuildSpaceCatalogSelected`, `SetBuildSpaceUnitSelected`, `HoldUnit` and `CancelHold`.
@@ -34,9 +36,15 @@
 
 [AdditionWeaponShelfModel](../Content/Lua/GameLogics/Interaction/Addition/SubPartModel/AdditionWeaponShelfModel.lua) provides rack-specific candidate filtering, source-container data and occupancy feedback. Its native entry point is `OnWeaponShelfHang` in the included logic library. [Design discussion](SHARED_INTERACTIONS.md).
 
-## 7. Follow a world-workbench opening
+## 7. Follow the equipment-workbench action end to end
 
-[WorkBenchModel](../Content/Lua/GameLogics/WorkBench/WorkBenchModel.lua) and [PalWorkBenchModel](../Content/Lua/GameLogics/PalWorkBench/PalWorkBenchModel.lua) retain the selected opening, leave and cleanup methods. Follow `OnSetUIVisible` → `MyShowPanel`, then `MyHidePanel` / `OnHidePanel`. Product widgets and full crafting execution remain external. [Screenshot-to-integration guide](WORKBENCH_INTERACTIONS.md).
+[WorkBenchModel](../Content/Lua/GameLogics/WorkBench/WorkBenchModel.lua): `OnSetUIVisible` → `MyShowPanel` establishes world context. [PalWorkBenchModel](../Content/Lua/GameLogics/PalWorkBench/PalWorkBenchModel.lua) shows the separate consumable-workbench lifecycle.
+
+[WorkBenchProduct](../Content/Lua/GameLogics/WorkBench/WorkBenchProduct.lua): start with `RefreshProductBtnGroupForMake` for precedence and recovery actions. `OnBtnMake` routes requirements to guidance/tracking or emits the make event; `OnBtnInProducing` and `OnBtnMakeCanTake` route cancellation and collection. Follow `OnProduceInfoChanged` and `PalProduce_CountDownUpdate` for native-state refresh.
+
+[WorkBenchPanel](../Content/Lua/GameLogics/WorkBench/WorkBenchPanel.lua): the event binding leads to `OnBtnMake`, which sets confirmation policy and delegates to the model. `OnBuildLvBtnClicked` preserves the workbench GUID for guidance. Back in the model, `OnMakeClicked` checks action/eligibility and `func_MyMakeStart` distinguishes native queue requests from local progress. `MyHidePanel` / `OnHidePanel` separate hiding from cleanup.
+
+[Design discussion](WORKBENCH_INTERACTIONS.md) · [Focused action tests](../tests/test_workbench_actions.py).
 
 ## 8. Understand the boundary
 

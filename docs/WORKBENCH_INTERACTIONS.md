@@ -1,35 +1,74 @@
-# Workbench interaction: from a world object to a crafting interface
+# Workbench UI: turn crafting state into a useful next action
 
 [Overview and screenshots](../README.md) · [中文案例](README.zh-CN.md) · [Code tour](CODE_TOUR.md)
 
-## Which interface is this?
+## Context and contribution
 
-The equipment screenshot shows **装备台 / 打造**: equipment crafting opened by interacting with a workbench. Weapon, armour, accessory and tool categories feed a selected product's details and material requirements. It is not the character equipment-slot UI. The other workbench screenshot shows **工艺台 / 工艺**, with potions, arrows, materials and quantity controls.
+The equipment workbench combines product categories, progression rows, selected-item details, materials and crafting controls. It is opened through interaction with a constructed world object. My work included development and maintenance of building-object interactions and their UI within the existing team-maintained systems.
 
-The integration code distinguishes `WorkBenchModel` from `PalWorkBenchModel`. Native dispatch saves the interacting piece's GUID, configuration, level and operation type before emitting `LogicEvent_WorkBenchUI_SetVisible` or `LogicEvent_PalWorkBenchUI_SetVisible`. The full dispatcher is external; the included model methods show how those events enter the UI lifecycle.
+The important engineering problem extends beyond opening a panel: **what should the player be able to do now, and what should happen if crafting cannot start?** The retained product, panel and model methods make that decision path inspectable.
 
-The screenshot versions are not pinned to a source revision. They illustrate the player-facing feature, while the selected code explains its integration. Neither screenshot is relabelled as the separate semi-finished-goods production queue panel.
+## 1. Establish the interaction context
 
-## Design problem
+Native interaction supplies the workbench GUID and operation context to `WorkBenchModel:OnSetUIVisible`. `MyShowPanel` starts a leave-distance check, initialises the selected workbench operation and asynchronously binds the panel.
 
-A crafting screen is attached to a world interaction. It needs context to initialise the correct workbench behaviour, and must stop being usable when that interaction is no longer valid. Conversely, small movement at the moment of opening should not immediately close the screen.
+The equipment workbench also has a main-menu entry point. The consumable/ammunition workbench uses `PalWorkBenchModel` with a separate panel lifecycle. The equipment action logic below is not assumed to implement both interfaces.
 
-## Equipment-workbench path
+## 2. Distinguish an existing job from a new crafting attempt
 
-`WorkBenchModel:OnSetUIVisible` marks the opening context as a piece interaction and passes the GUID and operation type to `MyShowPanel`. That method starts a leave-distance check, initialises workbench data for the operation type, asynchronously opens the panel, binds its model and invokes `OnMyShowPanel`.
+`WorkBenchProduct:RefreshProductBtnGroupForMake` applies an ordered decision:
 
-The model also has a separate main-menu entry point. This case covers the world-interaction path; it does not claim that every opening of the interface requires standing at a bench.
+1. **No selected make ID:** hide the primary button.
+2. **Native production in progress:** show the production/cancel action and start a state poll.
+3. **Native production paused:** show the production/cancel action without that poll.
+4. **Output available to collect:** show the collection action.
+5. **Otherwise evaluate the selected recipe:** workbench requirement, materials, carry limit, then local crafting/start state.
 
-## Crafting-workbench path
+Existing job state therefore takes priority over requirements for a new attempt. For example, missing materials must not replace the action for output that is already collectable, once a make ID is selected.
 
-`PalWorkBenchModel:MyShowPanel` starts its own named leave check. If its panel already exists it invokes the panel's show method; otherwise it opens the frame asynchronously and binds the behaviour. It uses a distinct frame path and model rather than treating the equipment and consumable catalogues as identical views.
+The inputs have different meanings. Native queries describe the interacting object's production state. `WorkBenchModel.m_State_ConditionEnough`, `m_State_MaterialEnough` and `m_State_ArriveTakeLimit` hold eligibility information for the current selection. The broader product-population path supplies those fields; its bodies are outside this excerpt. Keeping that distinction visible is essential when a button appears to show the wrong state.
 
-## A lifecycle detail with a clear purpose
+## 3. Make requirements actionable
 
-Both methods set the leave threshold to the interaction trace limit **plus 30 world units**. This creates a small opening/closing distance margin: opening the UI near the interaction boundary should not instantly satisfy the close condition. This is a usability integration choice, not a measured performance optimisation or a claim of a newly fixed historical bug.
+A blocked recipe does not always mean a disabled control:
 
-`MyHidePanel` requests hiding. `OnHidePanel` stops the leave check, clears native interaction context, lets the panel clean up, interrupts an in-progress local crafting flow when applicable, and resets model data. Full interruption and crafting implementations are not exported here; their signatures remain visible. Native queue-backed crafting and local progress-driven crafting have different paths in the larger system, so closing the UI is not described as universally cancelling all production.
+- **Workbench level too low:** the button remains enabled and shows the requirement. `OnBtnMake` delegates to `WorkBenchPanel:OnBuildLvBtnClicked`, which opens the existing upgrade-guidance view with the current workbench GUID.
+- **Materials missing:** the button remains enabled and opens recipe material tracking. The shared click handler also preserves the recipe, level and tracking type for its enhancement-material branch.
+- **Carry limit reached:** the button is disabled. The model also rejects this condition if the handler is invoked directly.
 
-## What the excerpt establishes
+This connects explanation to recovery: tell the player what is missing and give them the relevant next step. It also means that **enabled** is not synonymous with **will start crafting**.
 
-It explains object-bound opening, panel/model binding, a leave-distance margin and explicit cleanup boundaries. Product rendering, progression-tree construction, all crafting rules, server execution and actual UMG assets remain external. Focused tests verify selected opening/leave/cleanup handlers with controlled services; they do not execute the screenshot's full interface.
+## 4. Follow the command beyond the button
+
+For an eligible make action, the included chain is:
+
+`WorkBenchProduct:OnBtnMake` → `UIEvent_WorkBenchProduct_MakeClicked` → `WorkBenchPanel:OnBtnMake` → `WorkBenchModel:OnMakeClicked` → `func_MyMakeStart`.
+
+The panel determines whether the selected category and first-use-experience state require confirmation. The model checks the current action state and eligibility, or delegates interruption if local crafting is already running.
+
+The start function then separates two execution models:
+
+- **Native queue-backed production:** dispatch the make ID, repeat count and equipment-material instance through `WorkBench_ReqMakeItemWithPal`, then hide the panel.
+- **Local progress-driven crafting:** initialise local progress state, request the native progress bar, update controls and presentation, and retain the current make ID.
+
+Cancellation and collection have their own handlers. `OnBtnInProducing` sends the current object's GUID and operation type to the cancellation event; `OnBtnMakeCanTake` requests collection for the current GUID. The interface does not grant the item itself.
+
+## 5. Refresh from production state, not an invented completion time
+
+`OnProduceInfoChanged` refreshes the action group. While production is active, the methods named `PalProduce_*CountDown` also poll native state once per second using a scoped timer. In this selected implementation, the timer is a **state check**, not a visible countdown calculation.
+
+If native data says output is collectable, the action changes to collection and the timer stops. If production ends without collectable output, the action group is re-evaluated. There is no rule that awards an item because a displayed timer reached zero.
+
+Panel cleanup stops its leave check and clears interaction context. The close threshold includes a 30-world-unit margin beyond interaction range. Local progress interruption and queue-backed production are separate lifetimes: hiding the panel after a native request does not mean cancelling the queued job.
+
+## Result and trade-offs
+
+The implementation provides a coherent primary-action area across crafting, requirements, cancellation and collection. It connects the selected item to gameplay rules and offers a route forward when requirements are unmet, while fitting the existing UMG/Lua authoring workflow.
+
+The complexity remains real: eligibility is shared between product, panel and model; production state comes from native queries; numeric switcher indices depend on the widget asset. This is practical cross-layer UI engineering, not a pure view-model architecture. A future refactor could centralise the derived action and its reason, provided it preserves the existing bindings and command checks. That is a proposal, not a historical change.
+
+## Inspect and verify
+
+Start with [WorkBenchProduct](../Content/Lua/GameLogics/WorkBench/WorkBenchProduct.lua), then [WorkBenchPanel](../Content/Lua/GameLogics/WorkBench/WorkBenchPanel.lua) and [WorkBenchModel](../Content/Lua/GameLogics/WorkBench/WorkBenchModel.lua).
+
+The [focused action tests](../tests/test_workbench_actions.py) exercise state precedence, recovery actions, panel/model routing, confirmation, both start branches and native-state polling. [Dependencies](DEPENDENCIES.md) describes omitted population, widget and execution services; [Debugging](DEBUGGING.md) records late-confirmation and context-lifetime checks that still require the complete runtime.

@@ -2,7 +2,7 @@
 
 The suite executes selected methods from the included Lua modules with controlled dependencies. It is not a replacement implementation of the feature, an Unreal integration test or a device benchmark. Tests and instrumentation are new portfolio material.
 
-Local verification on 13 September 2026: **34 tests passed**, using Lupa 2.6. All 20 included Lua files passed syntax compilation; all five gallery images passed PNG dimension/link checks. The suite covers workbench integration, the weapon-rack selector, and supporting placement, storage and production excerpts. Native C++ and Unreal integration were not executed.
+Local verification on 13 September 2026: **50 tests passed**, using Lupa 2.6. All 22 included Lua files passed syntax compilation; all five gallery images passed PNG dimension/link checks. The suite covers workbench integration, the weapon-rack selector, and supporting placement, storage and production excerpts. Native C++ and Unreal integration were not executed.
 
 ## Run
 
@@ -27,12 +27,15 @@ python -m unittest discover -s tests -v
 - Shared selector object/type matching, empty-list closure and frame HUD/leave checks.
 - Weapon-rack candidate filtering, bag/shortcut positions, command dispatch and occupancy notices.
 - Equipment/crafting workbench opening, world context, leave-distance margin, panel reuse and delegated cleanup.
+- Equipment product-action precedence: no selection, producing, paused, collectable, level/material requirements, carry limit and local progress.
+- Upgrade guidance and material tracking; panel/model event routing; current-action and carry-limit checks; deferred confirmation.
+- Native queue request versus local progress start, local interruption, object-scoped cancel/collect arguments and state-driven polling.
 - Five full-resolution PNG files and their gallery links.
 - Characterisation of the shared cooldown setter's early return; a passing test records existing behaviour, not a successful cooldown implementation.
 
 ## Instrumentation boundary
 
-The original suite loads named method bodies into Lua tables and supplies their required collaborators. The shared-interaction suite loads the included shared/model modules and calls their initialisers against controlled model factories; it invokes handlers explicitly. Neither suite performs real framework event registration, UMG construction, native traces or RPCs. Full Lua files are separately syntax-checked. List-call counts describe the instrumented test workload, not measured allocations or shipping performance.
+The original suite loads named method bodies into Lua tables and supplies their required collaborators. The shared-interaction suite loads the included shared/model modules and calls their initialisers against controlled model factories; it invokes handlers explicitly. Neither suite performs real framework event registration, UMG construction, native traces or RPCs. The workbench-action suite connects the selected product event to the selected panel and model handlers. Widget setters, timer scheduling, popup presentation, context lookup and native exports are explicit test doubles. Full Lua files are separately syntax-checked. List-call counts describe the instrumented test workload, not measured allocations or shipping performance.
 
 ## In-engine regression targets
 
@@ -45,6 +48,7 @@ The original suite loads named method bodies into Lua tables and supplies their 
 7. Measure native placement cost, Lua refresh work and visible queue-row updates separately before reporting performance gains.
 8. Open a rack selector, move the source item or occupy the rack from another client, then select. Verify native validation and visible recovery.
 9. Open equipment and crafting workbenches near the interaction boundary, move away, and close during loading/crafting. Verify local and native production paths independently.
-10. Switch racks during asynchronous frame creation, close before completion, and test queued row clicks. Validate cooldown configuration separately from method characterisation.
+10. Open crafting confirmation, then change inventory, action state or workbench context before accepting. The retained confirmation callback calls the start function without repeating the earlier checks; verify the full request/validation boundary.
+11. Switch racks during asynchronous frame creation, close before completion, and test queued row clicks. Validate cooldown configuration separately from method characterisation.
 
 These are validation targets, not claims that the full game was executed or all targets passed.

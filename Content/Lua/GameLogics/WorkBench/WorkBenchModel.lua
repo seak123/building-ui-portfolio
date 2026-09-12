@@ -147,13 +147,60 @@ function WorkBenchModel:OnFetchProduct(e, r, nResultCode, PieceTypeID, ProductIt
     -- Implementation omitted.
 end
 function WorkBenchModel:OnMakeClicked()
-    -- Implementation omitted.
+    if self.m_State_InMaking == true then
+        self:func_MyMakeInterrupt()
+        return
+    end
+    if ItemMakeTable.CheckExecuteMakeByActionType() == false then
+        return
+    end
+    if self.m_State_MaterialEnough == false then
+    elseif self.m_State_ConditionEnough == false then
+    elseif self.m_State_ArriveTakeLimit == true then
+    elseif self.m_IsShowConfirmMsgBox == true then
+        local MessageBoxParam =
+        {
+            DescText = ItemMakeTable.MakeText_ConfirmMsgText,
+            IsShowBG = true,
+            ButtonLayout = "ok_cancel",
+            ConfirmLambda = function()
+                self.m_IsShowConfirmMsgBox = false
+                self:func_MyMakeStart()
+            end,
+        }
+        EventSystem.Fire("UIEvent_MessageBox_Show", MessageBoxParam)
+    else
+        self:func_MyMakeStart()
+    end
 end
 function WorkBenchModel:func_MyMakeStart()
-    -- Implementation omitted.
+    self.m_SuccessCarryMakeId = self.m_BenchMakeId
+    self.m_SuccessMakeRepeat = self.Panel.m_CurMakeRepeat
+    self.m_SuccessEquipClientIDForMaterial = self.m_EquipClientIDForMaterial
+    self.m_SuccessItemClientId = 0
+    self.m_SuccessItemTypeId = self.m_ProductItemTypeId
+    if self.IsItemMakeWithPal == true then
+        WorkBenchExport.WorkBench_ReqMakeItemWithPal(_G.GlobalContext, self.m_SuccessCarryMakeId, self.m_SuccessMakeRepeat, self.m_SuccessEquipClientIDForMaterial)
+        self:MyHidePanel()
+    else
+        if self.m_State_InMaking == true then
+        end
+        self.m_State_InMaking = true
+        self.m_State_ReceivedSuccessMsg = false
+        self.m_State_ReceivedPrograssMsg = false
+        self.Panel:Func_RefreshAllBtn()
+        local fMakeTime = EquipMadeExport.CarryMake_GetMakeTime(_G.GlobalContext, self.m_SuccessCarryMakeId)
+        EquipMadeExport.CarryMake_BeginProgressBar(_G.GlobalContext, self.m_SuccessCarryMakeId, fMakeTime)
+        self.Panel:PlayProductMakeEffect(self.m_SuccessItemTypeId, true, fMakeTime)
+        self.Panel:SetBtnVisible_BlockClickOnMake(true)
+        self:SetCurrMakeID(self.m_SuccessCarryMakeId)
+        self.m_BindMakeSoundHandle = UE4.PzAudioUtil.PlayAudio(_G.GlobalContext, 10121)
+    end
 end
 function WorkBenchModel:func_MyMakeInterrupt()
-    -- Implementation omitted.
+    if self.m_State_InMaking == true and self.m_State_ReceivedPrograssMsg == false then
+        EquipMadeExport.CarryMake_InterruptProgressBar(_G.GlobalContext)
+    end
 end
 function WorkBenchModel:func_OnMsgProgressInterrupt()
     -- Implementation omitted.
