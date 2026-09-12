@@ -2,7 +2,7 @@
 
 The suite executes selected methods from the included Lua modules with controlled dependencies. It is not a replacement implementation of the feature, an Unreal integration test or a device benchmark. Tests and instrumentation are new portfolio material.
 
-Local verification on 12 September 2026: **33 tests passed**, using Lupa 2.6. All 19 included Lua files passed syntax compilation. Native C++ and Unreal integration were not executed by this suite.
+Local verification on 13 September 2026: **34 tests passed**, using Lupa 2.6. All 20 included Lua files passed syntax compilation; all five gallery images passed PNG dimension/link checks. The suite covers workbench integration, the weapon-rack selector, and supporting placement, storage and production excerpts. Native C++ and Unreal integration were not executed.
 
 ## Run
 
@@ -26,7 +26,8 @@ python -m unittest discover -s tests -v
 - Storage range-based close behaviour and production progress re-anchoring/start/stop.
 - Shared selector object/type matching, empty-list closure and frame HUD/leave checks.
 - Weapon-rack candidate filtering, bag/shortcut positions, command dispatch and occupancy notices.
-- Incubator compatibility/count filtering, slot re-query at click time, mature-slot collection and first-slot time notice.
+- Equipment/crafting workbench opening, world context, leave-distance margin, panel reuse and delegated cleanup.
+- Five full-resolution PNG files and their gallery links.
 - Characterisation of the shared cooldown setter's early return; a passing test records existing behaviour, not a successful cooldown implementation.
 
 ## Instrumentation boundary
@@ -43,7 +44,7 @@ The original suite loads named method bodies into Lua tables and supplies their 
 6. Verify localisation, long labels, keyboard/mouse and touch behaviour, DPI/aspect ratios and focus.
 7. Measure native placement cost, Lua refresh work and visible queue-row updates separately before reporting performance gains.
 8. Open a rack selector, move the source item or occupy the rack from another client, then select. Verify native validation and visible recovery.
-9. Fill the incubator's remaining slot from another client; test no available slots, incompatible eggs and mature-output collection. Verify request rejection and local feedback separately.
-10. Switch rack/incubator contexts during asynchronous frame creation, close before completion, and test queued row clicks. Validate cooldown configuration separately from method characterisation.
+9. Open equipment and crafting workbenches near the interaction boundary, move away, and close during loading/crafting. Verify local and native production paths independently.
+10. Switch racks during asynchronous frame creation, close before completion, and test queued row clicks. Validate cooldown configuration separately from method characterisation.
 
 These are validation targets, not claims that the full game was executed or all targets passed.

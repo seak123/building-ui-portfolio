@@ -68,7 +68,7 @@ class PublicFiles(unittest.TestCase):
     def test_no_internal_metadata(self):
         files = [ROOT/'README.md']
         for directory in ['Content','Source','docs','media']:
-            files += [p for p in (ROOT/directory).rglob('*') if p.is_file()]
+            files += [p for p in (ROOT/directory).rglob('*') if p.is_file() and p.suffix in {'.md','.json','.lua','.cpp','.h'}]
         for path in files:
             with self.subTest(path=path.name):
                 self.assertNotRegex(text(path), r'(?i)(?:ssh|git)://|git@[^\s:]+:|original_revision|--(?:bug|story)=\d+|[A-Z]:[\\/]Users[\\/]|Created by\s+\w+')

@@ -487,21 +487,69 @@
       "sha256": "31735685f60c5d991a3b94f4844eeee0f23a6b17f402b5b3f1631e661d766ef0"
     },
     {
-      "path": "Content/Lua/GameLogics/Interaction/Addition/SubPartModel/AdditionEggModel.lua",
+      "path": "Content/Lua/GameLogics/WorkBench/WorkBenchModel.lua",
       "retained_methods": [
-        "AdditionEggModel:_init",
-        "AdditionEggModel:OnOpenEggView",
-        "AdditionEggModel:RefreshPutEggData",
-        "AdditionEggModel:OnEggPutDown",
-        "AdditionEggModel:OnPalGet",
-        "AdditionEggModel:OnPalIncubateCompleted",
-        "AdditionEggModel:GetNextSlotIndex",
-        "AdditionEggModel:OnContainerUpdate",
-        "AdditionEggModel:OnEggCheck",
-        "AdditionEggModel:GetIncubatorEntity"
+        "WorkBenchModel:_init",
+        "WorkBenchModel:MyResetData",
+        "WorkBenchModel:MyShowPanel",
+        "WorkBenchModel:MyHidePanel",
+        "WorkBenchModel:OnHidePanel",
+        "WorkBenchModel:IsPanelVisible",
+        "WorkBenchModel:OnSetUIVisible",
+        "WorkBenchModel:GetCurWorkBenchGuid",
+        "WorkBenchModel:OnLeaveWorkBench"
       ],
-      "omitted_bodies": [],
-      "sha256": "b0a377c0314501496732fd4af94bfee90206314742e4b6b87527d3b6b9a3a457"
+      "omitted_bodies": [
+        "WorkBenchModel:OnCultureChange",
+        "WorkBenchModel:GetMakeDataByMakeID",
+        "WorkBenchModel:GetItemsEnhanceData",
+        "WorkBenchModel:GetItemsRepairData",
+        "WorkBenchModel:ShowUIByMainMenu",
+        "WorkBenchModel:OnCancelMake",
+        "WorkBenchModel:OnFetchProduct",
+        "WorkBenchModel:OnMakeClicked",
+        "WorkBenchModel:func_MyMakeStart",
+        "WorkBenchModel:func_MyMakeInterrupt",
+        "WorkBenchModel:func_OnMsgProgressInterrupt",
+        "WorkBenchModel:func_MyMakeProgressBarEnd",
+        "WorkBenchModel:func_MyMakeReceiveNetRsp",
+        "WorkBenchModel:func_MyMakeFinish",
+        "WorkBenchModel:func_ClosePanelOnBeHit",
+        "WorkBenchModel:func_OnFightStateChanged",
+        "WorkBenchModel:OnTargetCheckListChanged",
+        "WorkBenchModel:OnEquipEnhanceRsp",
+        "WorkBenchModel:OnEquipRepairRsp",
+        "WorkBenchModel:GetBuilLvupGuideData",
+        "WorkBenchModel:GetBuildLvupGuideRecipeIds",
+        "WorkBenchModel:ShowBuildLvupGuidePanel",
+        "WorkBenchModel:SetCurrMakeID",
+        "WorkBenchModel:GetCurrMakeID"
+      ],
+      "sha256": "c85d81c0d0c5184a8c61356812e5a0f98dc7986be4edb4da4a5fea604a1f09af"
+    },
+    {
+      "path": "Content/Lua/GameLogics/PalWorkBench/PalWorkBenchModel.lua",
+      "retained_methods": [
+        "PalWorkBenchModel:_init",
+        "PalWorkBenchModel:MyResetData",
+        "PalWorkBenchModel:MyShowPanel",
+        "PalWorkBenchModel:MyHidePanel",
+        "PalWorkBenchModel:OnHidePanel",
+        "PalWorkBenchModel:IsPanelVisible",
+        "PalWorkBenchModel:OnSetUIVisible",
+        "PalWorkBenchModel:OnLeaveBuildPiece"
+      ],
+      "omitted_bodies": [
+        "PalWorkBenchModel:func_MyMakeStart",
+        "PalWorkBenchModel:func_MyMakeInterrupt",
+        "PalWorkBenchModel:func_OnMsgProgressInterrupt",
+        "PalWorkBenchModel:func_MyMakeProgressBarEnd",
+        "PalWorkBenchModel:func_MyMakeReceiveNetRsp",
+        "PalWorkBenchModel:func_MyMakeFinish",
+        "PalWorkBenchModel:func_ClosePanelOnBeHit",
+        "PalWorkBenchModel:OnTargetCheckListChanged"
+      ],
+      "sha256": "1e54865f1b996c4e020651d4d62b2e3b7a466881c5c82314644a5d5a943b7ae0"
     },
     {
       "path": "Source/ProjectZ/GameLogic/Building/PzBuildHoldFlowSystem.cpp",
@@ -524,12 +572,10 @@
         "SendFetch_QueueWorkReq",
         "SendCancel_QueueWorkReq",
         "SendInteractRequest",
-        "BuildingOptionReq",
-        "SendPutEggReq",
-        "SendGetPalReq"
+        "BuildingOptionReq"
       ],
       "omitted_bodies": "Other methods and project dependencies omitted.",
-      "sha256": "93b79bf96feaf93ee9e250a68ee54bc1d90816405c3d27932abae61e36c8e78b"
+      "sha256": "53a52da9aff6262c2a6e6472a4ef5e769d3d0b9ae35afac881a3ba3d8ff2657a"
     },
     {
       "path": "Source/ProjectZ/GameLogic/LogicLibrary/PzLogicLibrary.cpp",

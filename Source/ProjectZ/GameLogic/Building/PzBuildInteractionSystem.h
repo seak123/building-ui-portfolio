@@ -11,7 +11,5 @@ public:
     void SendCancel_QueueWorkReq(FGuid BuildGuid, int32 InteractId, int32 Slot);
     void SendInteractRequest(const proto::PZ_CS_GUID& InGuidPro, int32 InteractId, int32 OpActId, const proto::PZ_OP_OBJ_REQ_DATA& OpData);
     void BuildingOptionReq(const FPzProtoMessage& Sync);
-    void SendPutEggReq(FGuid Guid, int32 InteractId, int32 EggID, int32 SlotIndex);
-    void SendGetPalReq(FGuid Guid, int32 InteractId, int32 SlotIndex);
     // State, helper declarations, reflection and base classes are external.
 };

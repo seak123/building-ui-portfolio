@@ -22,7 +22,13 @@ For PC actions, `CheckBuildActionValid` checks three different facts: PC interac
 
 **Result and trade-off.** The catalogue, operation controls and world preview have an inspectable contract. The bitmask is compact and cheap to compare, but requires stable enum definitions on both sides and is not a full state model for every possible mode. UI mode checks and native validation remain complementary.
 
-## 2. A processing station with a meaningful primary action
+## 2. Workbench interaction opens a crafting interface
+
+The supplied equipment-workbench image is a crafting screen, not an equipment-slot view. Equipment and consumable workbenches use distinct model/frame paths. Their included integration methods retain object context, start a leave-distance check with a small margin, bind the panel and clean up on exit. [Implementation and screenshots](WORKBENCH_INTERACTIONS.md).
+
+## 3. A processing station with a meaningful primary action
+
+This supporting code example is the semi-finished-goods production panel. No screenshot of that panel is supplied; the equipment and crafting workbench images are not used as evidence of its queue UI.
 
 **Problem.** A recipe may exist but be locked, hidden by conditions, impossible at the current station level, missing materials or blocked by queue capacity. Making every blocked state look the same leaves players unsure what to do next.
 
@@ -36,7 +42,7 @@ Queue rows show native work state and locally advance the displayed workload whi
 
 **Result and trade-off.** The interface connects the reason an action is blocked to a useful response. It retains separate catalogue/recipe state and button state, so their contract must remain clear: a locked recipe is handled by a separate view switch, not a dedicated branch in `GetBtnState`. Some late-response and missing-entity assumptions need runtime validation; they are listed in [Debugging](DEBUGGING.md).
 
-## 3. Storage: several gestures, one transfer boundary
+## 4. Storage: several gestures, one transfer boundary
 
 **Problem.** Double-click, item-detail actions, drag/drop and bulk operations all work on the same underlying inventory. A local widget change cannot stand in for a confirmed transfer. Switching or walking away from a box also changes the validity of the interaction.
 
@@ -48,13 +54,13 @@ The storage view refreshes from container data, filters box-update notifications
 
 **Result and trade-off.** Gestures remain presentation choices; transfer meaning remains explicit in the command path. Reusing slot data reduces rebuild work, but still scans container slots and assumes capacity correctly indicates when the data structure must be rebuilt. It is not an incremental inventory diff.
 
-## 4. Weapon rack and incubator: share the selection surface, not the rules
+## 5. Weapon rack: apply shared presentation to object-specific rules
 
-**Problem.** Both interactions ask the player to choose an eligible item, but the meaning of eligibility and the resulting command differ. A rack needs an actual source-container position; an incubator needs a compatible egg and an available native slot.
+**Problem.** A rack needs an eligible-item selector, but a generic selection widget should not own rack compatibility, source-container coordinates or world occupancy.
 
-**Implementation.** Object-specific adapters provide a common title/list/context record to `AdditionModel` and `AdditionFrame`. Rows route selections by interaction key. Shared view logic handles contextual closure, while the rack handles occupied-slot feedback and the incubator queries capacity at click time. Incubation-time inspection uses a separate notice, not the production panel.
+**Implementation.** Its adapter provides a title/list/context record to `AdditionModel` and `AdditionFrame`. Rows route selections by interaction key. Shared view logic handles contextual closure; the rack adapter retains item location and occupied-slot feedback.
 
-**Result and trade-off.** The same selection interface serves distinct objects without absorbing their gameplay rules. The cost is a shared mutable context and global events, so stale callbacks and clicks remain important regression targets. [Full comparison and code boundaries](SHARED_INTERACTIONS.md).
+**Result and trade-off.** Layout and lifecycle services remain shared while item selection and execution remain specific. Global events and mutable context still require stale-callback tests. [Full example](SHARED_INTERACTIONS.md).
 
 ## Cross-discipline workflow
 

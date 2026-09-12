@@ -21,9 +21,11 @@ This case preserves selected feature code, not a complete game build. C++ header
 - `PzLogicLibrary` / inventory manager: lookup by item-client ID, slot positions and storage identity; client eligibility is not server authority.
 - `PzStorageBoxRPCComponent`: existing replicated transport. The selected server method illustrates some withdrawal checks, not all validation and mutation logic.
 
-## Weapon-rack and incubator services
+## Weapon-rack and workbench services
 
-The weapon-rack and incubator examples also use the existing hangable-item/egg configuration, totem-aware item counts and native incubator queries. The rack RPC's server implementation, incubation simulation, audio resources and use abilities are external. The general interaction dispatcher delivers `WeaponShelf_OpenHangView(PieceID, Guid, InteractionID)`, `Incubator_OpenEggView(Guid, InteractionID)` and `Incubator_Check(Guid, InteractionID)`; the adapters are included, not that full dispatcher. Other interaction keys and the charging-specific row presentation remain visible as shared-module context; only weapon-rack and incubator adapters are added to this case.
+The rack uses hangable-item configuration and bag/shortcut container lookups. Its RPC server implementation is external. The general dispatcher delivers `WeaponShelf_OpenHangView(PieceID, Guid, InteractionID)`; the adapter is included, not the full dispatcher. Other common-selector keys remain as shared-module context.
+
+The equipment/crafting workbench model excerpts depend on `WorkBenchExport`, `EquipMadeExport`, table services and actual panel behaviours. Selected opening and cleanup methods are included; product rendering, progression-tree construction, full crafting execution and widget binaries are external. The two screenshots do not establish an exact source-build match.
 
 ## Omitted functions
 

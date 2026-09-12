@@ -37,11 +37,13 @@ The existing object interaction sends `LogicEvent_Box_Open(ConfigId, Guid)`. `Bo
 
 The panel's 0.2-second range check is a client presentation rule, not server authority. A native request return or Lua `true` indicating dispatch is not acknowledgement of a completed inventory mutation. Shared container-update events supply the resulting state.
 
-## Weapon-rack / incubator selection contract
+## Workbench opening contract
 
-`AdditionWeaponShelfModel` and `AdditionEggModel` construct the same frame-data shape. `AdditionModel` keeps the current object/type and asynchronously opens the shared `AdditionFrame`. `AdditionItem` emits a selection event carrying the row data. The adapters check the interaction key and call different native commands.
+`WorkBenchModel` and `PalWorkBenchModel` handle distinct world-workbench interfaces. Opening passes world context into the model, starts a named leave-distance check and binds the asynchronous frame. The close threshold includes a 30-unit margin beyond interaction range. [Integration and boundaries](WORKBENCH_INTERACTIONS.md).
 
-Rack rows retain source-container coordinates. Egg rows retain type/count; native incubator capacity is queried when clicked. The frame filters leave events by object and interaction, and prevents overlap with the main menu. It does not own world occupancy, incubation timing or item mutation. [Detailed case](SHARED_INTERACTIONS.md).
+## Weapon-rack selection contract
+
+`AdditionWeaponShelfModel` supplies the common frame-data shape. `AdditionModel` keeps the current object/type and opens `AdditionFrame`; `AdditionItem` emits row selection. The rack adapter checks the key and calls a native command carrying source-container coordinates. The frame owns title/list and contextual closure, not world occupancy or item mutation. [Detailed case](SHARED_INTERACTIONS.md).
 
 ## Shared facilities, specialised behaviour
 

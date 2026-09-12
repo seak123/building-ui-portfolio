@@ -30,9 +30,13 @@ These examples explain inspectable behaviour and targeted checks. They are not i
 
 **Verification:** instrument list population and row refresh, then change contents without changing capacity. Separately test capacity changes, switching to another box of the same size, and native-container disappearance. The first two population paths are covered locally; switching/disappearance needs the full lifecycle contract.
 
-## One shared selector, different stale-state risks
+## A shared selector can outlive its original context
 
-The weapon rack handles matching-object occupancy notifications; the incubator re-queries free slots at selection time. Neither makes a client click an atomic reservation. Check inventory movement between display and selection, slots filled by another player, and object switches during asynchronous frame loading. The shared cooldown setter also has an early return before storing the configured duration. These are current-code observations, not invented historical fixes. [Shared interaction analysis and tests](SHARED_INTERACTIONS.md).
+The weapon rack handles matching-object occupancy notifications, but a client click is not an atomic reservation. Check inventory movement between display and selection, another player's occupation of the rack, and object switches during asynchronous loading. The common cooldown setter has an early return before storing a configured duration. [Current-code observations and test boundaries](SHARED_INTERACTIONS.md).
+
+## A workbench panel should not immediately close at the interaction boundary
+
+The selected equipment/crafting workbench opening methods use the interaction distance plus a 30-unit leave margin. Test opening at the boundary, small movement, moving fully away and cleanup. This applies to a world-object crafting screen, not the character equipment slots. [Workbench example](WORKBENCH_INTERACTIONS.md).
 
 ## Remaining lifecycle checks
 
