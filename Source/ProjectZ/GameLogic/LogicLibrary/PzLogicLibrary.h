@@ -12,5 +12,6 @@ public:
     static void FastMoveOutStorage(UObject* ContextObject, const FGuid& BoxGuid, const int ItemClientID, int Count);
     static void ChangeInStorageBox(UObject* ContextObject, const FGuid& BoxGuid, const int SrcPos, const int DstPos, const int Count);
     static int CheckEnableMoveToStorageBoxByPos(UObject* ContextObject, const FGuid& BoxGuid, const int SrcContainerType, const int SrcContainerPos);
+    static void OnWeaponShelfHang(const UObject* ContextObject, const FGuid& Guid, const int ItemId, const int ContainerType, const int ContainerPos);
     // State, helper declarations, reflection and base classes are external.
 };

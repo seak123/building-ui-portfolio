@@ -169,3 +169,46 @@ void UPzBuildInteractionSystem::BuildingOptionReq(const FPzProtoMessage& Sync)
 		}
 	}
 }
+
+void UPzBuildInteractionSystem::SendPutEggReq(FGuid Guid, int32 InteractId, int32 EggID, int32 SlotIndex)
+{
+	if (const FRES_HOMELAND_OP_CONFIG* InteractConfig = FKBinInteractivityTable::Find(this, InteractId))
+	{
+		switch (static_cast<tagBUILDING_OP_TYPE>(InteractConfig->iOp_type))
+		{
+		case tagBUILDING_OP_TYPE::BUILDING_OP_TYPE_PUT_EGG:
+			{
+				proto::PZ_OP_OBJ_REQ_DATA OpData;
+				proto::PZ_OP_OBJ_INCUBATOR_DATA* IncubatorData = OpData.mutable_egg_data();
+				IncubatorData->set_itemid(EggID);
+				IncubatorData->set_slotindex(SlotIndex);
+
+				SendInteractRequest(FGuidToCSPbGuid(Guid), InteractId, 0, OpData);
+			}
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void UPzBuildInteractionSystem::SendGetPalReq(FGuid Guid, int32 InteractId, int32 SlotIndex)
+{
+	if (const FRES_HOMELAND_OP_CONFIG* InteractConfig = FKBinInteractivityTable::Find(this, InteractId))
+	{
+		switch (static_cast<tagBUILDING_OP_TYPE>(InteractConfig->iOp_type))
+		{
+		case tagBUILDING_OP_TYPE::BUILDING_OP_TYPE_GET_PAL:
+			{
+				proto::PZ_OP_OBJ_REQ_DATA OpData;
+				proto::PZ_OP_OBJ_INCUBATOR_DATA* IncubatorData = OpData.mutable_egg_data();
+				IncubatorData->set_slotindex(SlotIndex);
+
+				SendInteractRequest(FGuidToCSPbGuid(Guid), InteractId, 0, OpData);
+			}
+			break;
+		default:
+			break;
+		}
+	}
+}

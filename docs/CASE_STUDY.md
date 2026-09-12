@@ -48,6 +48,14 @@ The storage view refreshes from container data, filters box-update notifications
 
 **Result and trade-off.** Gestures remain presentation choices; transfer meaning remains explicit in the command path. Reusing slot data reduces rebuild work, but still scans container slots and assumes capacity correctly indicates when the data structure must be rebuilt. It is not an incremental inventory diff.
 
+## 4. Weapon rack and incubator: share the selection surface, not the rules
+
+**Problem.** Both interactions ask the player to choose an eligible item, but the meaning of eligibility and the resulting command differ. A rack needs an actual source-container position; an incubator needs a compatible egg and an available native slot.
+
+**Implementation.** Object-specific adapters provide a common title/list/context record to `AdditionModel` and `AdditionFrame`. Rows route selections by interaction key. Shared view logic handles contextual closure, while the rack handles occupied-slot feedback and the incubator queries capacity at click time. Incubation-time inspection uses a separate notice, not the production panel.
+
+**Result and trade-off.** The same selection interface serves distinct objects without absorbing their gameplay rules. The cost is a shared mutable context and global events, so stale callbacks and clicks remain important regression targets. [Full comparison and code boundaries](SHARED_INTERACTIONS.md).
+
 ## Cross-discipline workflow
 
 The shared Lua/UMG framework was maintained collaboratively by the team. Widget names, child behaviours, event bindings, frame creation and list-data adapters form the integration contract. Designers can iterate on recipe conditions and feedback; UI artists can work on layout and animation; engineering keeps world identity, input state and request semantics consistent. Specialised panels reuse those facilities without losing their own lifecycle and action rules.

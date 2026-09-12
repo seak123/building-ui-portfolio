@@ -37,6 +37,12 @@ The existing object interaction sends `LogicEvent_Box_Open(ConfigId, Guid)`. `Bo
 
 The panel's 0.2-second range check is a client presentation rule, not server authority. A native request return or Lua `true` indicating dispatch is not acknowledgement of a completed inventory mutation. Shared container-update events supply the resulting state.
 
+## Weapon-rack / incubator selection contract
+
+`AdditionWeaponShelfModel` and `AdditionEggModel` construct the same frame-data shape. `AdditionModel` keeps the current object/type and asynchronously opens the shared `AdditionFrame`. `AdditionItem` emits a selection event carrying the row data. The adapters check the interaction key and call different native commands.
+
+Rack rows retain source-container coordinates. Egg rows retain type/count; native incubator capacity is queried when clicked. The frame filters leave events by object and interaction, and prevents overlap with the main menu. It does not own world occupancy, incubation timing or item mutation. [Detailed case](SHARED_INTERACTIONS.md).
+
 ## Shared facilities, specialised behaviour
 
 - **Bindings:** `Elements`, `Behaviours` and event settings connect named UMG controls to Lua methods. Missing bindings are integration failures, not recipe-state failures.

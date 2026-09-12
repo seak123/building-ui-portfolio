@@ -2,7 +2,7 @@
 
 The suite executes selected methods from the included Lua modules with controlled dependencies. It is not a replacement implementation of the feature, an Unreal integration test or a device benchmark. Tests and instrumentation are new portfolio material.
 
-Local verification on 11 September 2026: **19 tests passed**, using Lupa 2.6. All 14 included Lua files passed syntax compilation. Native C++ and Unreal integration were not executed by this suite.
+Local verification on 12 September 2026: **33 tests passed**, using Lupa 2.6. All 19 included Lua files passed syntax compilation. Native C++ and Unreal integration were not executed by this suite.
 
 ## Run
 
@@ -24,10 +24,14 @@ python -m unittest discover -s tests -v
 - Explicit characterisation of the missing-native-entity button-state return.
 - Storage population, stable-capacity data reuse, capacity rebuild and unrelated-object event filtering.
 - Storage range-based close behaviour and production progress re-anchoring/start/stop.
+- Shared selector object/type matching, empty-list closure and frame HUD/leave checks.
+- Weapon-rack candidate filtering, bag/shortcut positions, command dispatch and occupancy notices.
+- Incubator compatibility/count filtering, slot re-query at click time, mature-slot collection and first-slot time notice.
+- Characterisation of the shared cooldown setter's early return; a passing test records existing behaviour, not a successful cooldown implementation.
 
 ## Instrumentation boundary
 
-Tests load named method bodies into a Lua table and supply only their required collaborators. They do not run module initialisers, framework event registration, UMG construction, native traces or RPCs. Full Lua files are separately syntax-checked. List-call counts describe the instrumented test workload, not measured allocations or shipping performance.
+The original suite loads named method bodies into Lua tables and supplies their required collaborators. The shared-interaction suite loads the included shared/model modules and calls their initialisers against controlled model factories; it invokes handlers explicitly. Neither suite performs real framework event registration, UMG construction, native traces or RPCs. Full Lua files are separately syntax-checked. List-call counts describe the instrumented test workload, not measured allocations or shipping performance.
 
 ## In-engine regression targets
 
@@ -38,5 +42,8 @@ Tests load named method bodies into a Lua table and supply only their required c
 5. Open two same-capacity boxes in succession; move, split, sort, deposit and withdraw. Test container disappearance and entry recycling.
 6. Verify localisation, long labels, keyboard/mouse and touch behaviour, DPI/aspect ratios and focus.
 7. Measure native placement cost, Lua refresh work and visible queue-row updates separately before reporting performance gains.
+8. Open a rack selector, move the source item or occupy the rack from another client, then select. Verify native validation and visible recovery.
+9. Fill the incubator's remaining slot from another client; test no available slots, incompatible eggs and mature-output collection. Verify request rejection and local feedback separately.
+10. Switch rack/incubator contexts during asynchronous frame creation, close before completion, and test queued row clicks. Validate cooldown configuration separately from method characterisation.
 
 These are validation targets, not claims that the full game was executed or all targets passed.

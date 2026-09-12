@@ -28,6 +28,12 @@
 
 [PzLogicLibrary](../Source/ProjectZ/GameLogic/LogicLibrary/PzLogicLibrary.cpp) chooses the transfer route and common deposit validation. [PzStorageBoxRPCComponent](../Source/ProjectZ/GameLogic/Building/RPC/PzStorageBoxRPCComponent.cpp) illustrates selected native withdrawal checks; other inventory mutation code is outside this case.
 
-## 6. Understand the boundary
+## 6. Share an interaction surface
+
+[AdditionModel](../Content/Lua/GameLogics/Interaction/Addition/AdditionModel.lua) stores the common frame data and object/type context. [AdditionFrame](../Content/Lua/GameLogics/Interaction/Addition/AdditionFrame.lua) handles list/title and contextual closure. [AdditionItem](../Content/Lua/GameLogics/Interaction/Addition/AdditionItem.lua) binds item information and dispatches selection.
+
+Compare [AdditionWeaponShelfModel](../Content/Lua/GameLogics/Interaction/Addition/SubPartModel/AdditionWeaponShelfModel.lua) with [AdditionEggModel](../Content/Lua/GameLogics/Interaction/Addition/SubPartModel/AdditionEggModel.lua): candidate filtering, source-container data versus available incubation slots, and occupancy feedback versus maturity queries. Native entry points are `OnWeaponShelfHang`, `SendPutEggReq` and `SendGetPalReq` in the included C++ files. [Design discussion](SHARED_INTERACTIONS.md).
+
+## 7. Understand the boundary
 
 [Implementation map](source-manifest.json) lists included methods and omitted bodies. Short omission comments preserve signatures, not working substitutes. [Dependencies](DEPENDENCIES.md) defines external contracts; [Tests](TESTING.md) specifies which code paths execute locally.

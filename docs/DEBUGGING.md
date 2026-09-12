@@ -30,6 +30,10 @@ These examples explain inspectable behaviour and targeted checks. They are not i
 
 **Verification:** instrument list population and row refresh, then change contents without changing capacity. Separately test capacity changes, switching to another box of the same size, and native-container disappearance. The first two population paths are covered locally; switching/disappearance needs the full lifecycle contract.
 
+## One shared selector, different stale-state risks
+
+The weapon rack handles matching-object occupancy notifications; the incubator re-queries free slots at selection time. Neither makes a client click an atomic reservation. Check inventory movement between display and selection, slots filled by another player, and object switches during asynchronous frame loading. The shared cooldown setter also has an early return before storing the configured duration. These are current-code observations, not invented historical fixes. [Shared interaction analysis and tests](SHARED_INTERACTIONS.md).
+
 ## Remaining lifecycle checks
 
 - `BoxModel:SetBoxInteractiveState(true)` requests entry and then clears its stored GUID/config; the false branch requests exit. The visible frame destruction calls the false branch. Retained names alone do not establish the complete entry sequence.

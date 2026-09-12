@@ -129,3 +129,12 @@ int UPzLogicLibrary::CheckEnableMoveToStorageBoxByPos(UObject* ContextObject, co
 	}
 	return CheckEnableMoveToStorageBoxByID(ContextObject, BoxGuid, SrcItemTypeID, bSrcItemBind);
 }
+
+void UPzLogicLibrary::OnWeaponShelfHang(const UObject* ContextObject, const FGuid& Guid, const int ItemId, const int ContainerType, const int ContainerPos)
+{
+	auto BuildCommonRpcComponent = UPzBuildUtil::C_GetSelfBuildCommonRPCComponent(ContextObject);
+	if (IsValid(BuildCommonRpcComponent))
+	{
+		BuildCommonRpcComponent->S_WeaponShelfHang(Guid, ItemId, ContainerType, ContainerPos);
+	}
+}

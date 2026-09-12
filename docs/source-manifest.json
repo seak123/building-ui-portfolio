@@ -425,6 +425,85 @@
       "sha256": "3a23de31e17435b72ad8d63c1e3abc63e36554b8344f3d886b529064e8e66ca9"
     },
     {
+      "path": "Content/Lua/GameLogics/Interaction/Addition/AdditionModel.lua",
+      "retained_methods": [
+        "AdditionModel:_init",
+        "AdditionModel:ShowAdditionPanel",
+        "AdditionModel:RefreshAdditionPanel",
+        "AdditionModel:GetAdditionData",
+        "AdditionModel:GetAdditionKeys",
+        "AdditionModel:GetInteractionByID",
+        "AdditionModel:SetFrameBehaviousNil",
+        "AdditionModel:SetInteractionColdTime",
+        "AdditionModel:CacheInteractionTime",
+        "AdditionModel:CheckInCold",
+        "AdditionModel:GetInteractionName",
+        "AdditionModel:GetInteractionIconByID",
+        "AdditionModel:CheckIsCurInteractionEntity"
+      ],
+      "omitted_bodies": [],
+      "sha256": "314d817ee3cc1e44462acc86bbcf9903982155189e1ecb1e215a5138aa01e6fa"
+    },
+    {
+      "path": "Content/Lua/GameLogics/Interaction/Addition/AdditionFrame.lua",
+      "retained_methods": [
+        "AdditionFrame:_init",
+        "AdditionFrame:OnInitialize",
+        "AdditionFrame:OnDestroy",
+        "AdditionFrame:CheckValid",
+        "AdditionFrame:OnHUDStateChange",
+        "AdditionFrame:OnMainUIEntranceFrameShow",
+        "AdditionFrame:ShowData",
+        "AdditionFrame:RefreshList",
+        "AdditionFrame:SetTitleInfo",
+        "AdditionFrame:OnHideView",
+        "AdditionFrame:OnBuildInteractionLeave"
+      ],
+      "omitted_bodies": [],
+      "sha256": "a88151e06b3825ad69794f294cde469c57bb868636efd6f95d6ca7e4be0685b8"
+    },
+    {
+      "path": "Content/Lua/GameLogics/Interaction/Addition/AdditionItem.lua",
+      "retained_methods": [
+        "AdditionItem:_init",
+        "AdditionItem:OnDataSet",
+        "AdditionItem:OnClickItem",
+        "AdditionItem:OnReleased"
+      ],
+      "omitted_bodies": [],
+      "sha256": "8ed829ee467df1162ad4b4c04cec6baecc58d07b88b57084c1340bf69b47ad66"
+    },
+    {
+      "path": "Content/Lua/GameLogics/Interaction/Addition/SubPartModel/AdditionWeaponShelfModel.lua",
+      "retained_methods": [
+        "AdditionWeaponShelfModel:_init",
+        "AdditionWeaponShelfModel:OnOpenHangView",
+        "AdditionWeaponShelfModel:GetWeaponShelfHangData",
+        "AdditionWeaponShelfModel:OnItemHang",
+        "AdditionWeaponShelfModel:OnContainerUpdate",
+        "AdditionWeaponShelfModel:OnHangeItemChange"
+      ],
+      "omitted_bodies": [],
+      "sha256": "31735685f60c5d991a3b94f4844eeee0f23a6b17f402b5b3f1631e661d766ef0"
+    },
+    {
+      "path": "Content/Lua/GameLogics/Interaction/Addition/SubPartModel/AdditionEggModel.lua",
+      "retained_methods": [
+        "AdditionEggModel:_init",
+        "AdditionEggModel:OnOpenEggView",
+        "AdditionEggModel:RefreshPutEggData",
+        "AdditionEggModel:OnEggPutDown",
+        "AdditionEggModel:OnPalGet",
+        "AdditionEggModel:OnPalIncubateCompleted",
+        "AdditionEggModel:GetNextSlotIndex",
+        "AdditionEggModel:OnContainerUpdate",
+        "AdditionEggModel:OnEggCheck",
+        "AdditionEggModel:GetIncubatorEntity"
+      ],
+      "omitted_bodies": [],
+      "sha256": "b0a377c0314501496732fd4af94bfee90206314742e4b6b87527d3b6b9a3a457"
+    },
+    {
       "path": "Source/ProjectZ/GameLogic/Building/PzBuildHoldFlowSystem.cpp",
       "retained_methods": [
         "UpdateBuildingFlow",
@@ -445,10 +524,12 @@
         "SendFetch_QueueWorkReq",
         "SendCancel_QueueWorkReq",
         "SendInteractRequest",
-        "BuildingOptionReq"
+        "BuildingOptionReq",
+        "SendPutEggReq",
+        "SendGetPalReq"
       ],
       "omitted_bodies": "Other methods and project dependencies omitted.",
-      "sha256": "53a52da9aff6262c2a6e6472a4ef5e769d3d0b9ae35afac881a3ba3d8ff2657a"
+      "sha256": "93b79bf96feaf93ee9e250a68ee54bc1d90816405c3d27932abae61e36c8e78b"
     },
     {
       "path": "Source/ProjectZ/GameLogic/LogicLibrary/PzLogicLibrary.cpp",
@@ -459,10 +540,11 @@
         "MoveOutStorageToDstContainer",
         "FastMoveOutStorage",
         "ChangeInStorageBox",
-        "CheckEnableMoveToStorageBoxByPos"
+        "CheckEnableMoveToStorageBoxByPos",
+        "OnWeaponShelfHang"
       ],
       "omitted_bodies": "Other methods and project dependencies omitted.",
-      "sha256": "652b1f2211ee20ec3f1820162649da8202a910bc6bfc3a60c991a9ad3ea9484f"
+      "sha256": "341d5bc0474280ce1b62e27d901968295312d468bacc9c4e497976ecb3858ed9"
     },
     {
       "path": "Source/ProjectZ/GameLogic/Building/RPC/PzStorageBoxRPCComponent.cpp",
