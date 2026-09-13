@@ -1,12 +1,18 @@
 # Building UI: from placement to useful objects
 
-**Evan (Yaxin) Ge · C++ / Lua / UMG · ProjectZ engineering case study**
+**Evan (Yaxin) Ge · C++ / Lua / UMG · Past ProjectZ development work**
 
 How does a building system become a usable player experience? This case connects catalogue navigation and world-placement controls with equipment crafting, storage and object-specific interactions.
 
 I initiated the building system and developed its gameplay and associated UI. My work also included development and maintenance of building-object interactions and their panels, using the team's shared UI and gameplay infrastructure.
 
-[中文案例](docs/README.zh-CN.md) · [Full case study](docs/CASE_STUDY.md) · [Workbench actions](docs/WORKBENCH_INTERACTIONS.md) · [Architecture](docs/ARCHITECTURE.md) · [Code tour](docs/CODE_TOUR.md)
+[中文 README](docs/README.zh-CN.md) · [Case study](docs/CASE_STUDY.md) · [Decisions](docs/DECISIONS.md) · [Code tour](docs/CODE_TOUR.md) · [Architecture](docs/ARCHITECTURE.md) · [Visuals](media/README.md) · [Verification](docs/TESTING.md)
+
+## How to read this case
+
+This is a retrospective of specific work on ProjectZ, not a proposal for a new feature. The account follows actual implementation behaviour and verified interface relationships. Selected code excerpts retain module paths and calling relationships; omitted bodies and shortened interface outlines are labelled.
+
+Separately written reference models and tests are supporting material, not original game code or historical validation results. Documentation is in English, with one Chinese README. The [decision rationale](docs/DECISIONS.md) combines my account of the work with the implementation boundaries visible in the code.
 
 ## Three engineering decisions
 
@@ -20,7 +26,7 @@ The equipment-workbench action area distinguishes production in progress, paused
 
 **3. Share presentation while keeping object rules explicit.**
 
-Storage gestures converge on transfer commands. A weapon rack uses a common item selector but retains its own compatibility rules, item-source coordinates and occupancy feedback. Reuse belongs at the stable interface boundary, not in a panel that must understand every object's behaviour. [Storage](docs/CASE_STUDY.md#4-storage-several-gestures-one-transfer-boundary) · [Weapon rack](docs/SHARED_INTERACTIONS.md).
+I kept workbench composition specialised because weapon progression and category-specific layouts changed within that feature. Storage had a different reuse boundary: stable item/container data with configurable presentation. Missing-material actions reused recipe tracking to preserve a consistent recovery flow. The rack similarly reuses selection presentation while retaining its compatibility rules. [Why these boundaries differ](docs/DECISIONS.md) · [Weapon rack](docs/SHARED_INTERACTIONS.md).
 
 The result is a connected feature: players can select and position an object, then use its specialised interface with clear actions and world-bound context.
 
@@ -82,4 +88,4 @@ This source-reading portfolio contains selected implementations, interface outli
 
 The tests establish selected behaviour, not measured shipping performance or full in-engine validation. Game visuals and project material remain subject to their respective rights.
 
-**Companion case:** [Multiplayer UI — team flow, contextual support and asynchronous correctness](https://github.com/seak123/multiplayer-ui-portfolio).
+**Related cases:** [Multiplayer, teams & support UI](https://github.com/seak123/multiplayer-ui-portfolio) · [Mechanical workers, world-space UI & authoring](https://github.com/seak123/mechanical-workers-ui-portfolio).

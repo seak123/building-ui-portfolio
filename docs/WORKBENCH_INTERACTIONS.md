@@ -8,6 +8,10 @@ The equipment workbench combines product categories, progression rows, selected-
 
 The important engineering problem extends beyond opening a panel: **what should the player be able to do now, and what should happen if crafting cannot start?** The retained product, panel and model methods make that decision path inspectable.
 
+## Why this panel is specialised
+
+Weapon progression, equipment categories and data-dependent layouts required feature-specific composition and frequent iteration. I kept that complexity inside the workbench while reusing common item presentation and recipe tracking. Storage had a different boundary because its container/item data stayed consistent across object variants. [Full reuse decision](DECISIONS.md).
+
 ## 1. Establish the interaction context
 
 Native interaction supplies the workbench GUID and operation context to `WorkBenchModel:OnSetUIVisible`. `MyShowPanel` starts a leave-distance check, initialises the selected workbench operation and asynchronously binds the panel.
