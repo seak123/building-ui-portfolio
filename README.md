@@ -1,91 +1,92 @@
 # Building UI: from placement to useful objects
 
-**Evan (Yaxin) Ge · C++ / Lua / UMG · Past ProjectZ development work**
+![Equipment-workbench UI with weapon progression, product categories, selected-item details and crafting materials.](media/screenshots/Equipment_Workbench.png)
 
-How does a building system become a usable player experience? This case connects catalogue navigation and world-placement controls with equipment crafting, storage and object-specific interactions.
+From browsing and placing an object to crafting equipment or transferring items, the UI connects the player's next action to the current world context.
 
-I initiated the building system and developed its gameplay and associated UI. My work also included development and maintenance of building-object interactions and their panels, using the team's shared UI and gameplay infrastructure.
+**Evan (Yaxin) Ge · C++ / Lua / UMG · ProjectZ**
 
-[中文 README](docs/README.zh-CN.md) · [Case study](docs/CASE_STUDY.md) · [Decisions](docs/DECISIONS.md) · [Code tour](docs/CODE_TOUR.md) · [Architecture](docs/ARCHITECTURE.md) · [Visuals](media/README.md) · [Verification](docs/TESTING.md)
+[中文 README](docs/README.zh-CN.md) · [Screenshots](#gameplay-screenshots) · [Explore the work](#deeper-reading)
 
-## How to read this case
+*Equipment workbench: interacting with a constructed workbench opens product categories, progression rows, item details and material requirements. The action shown is **Stop crafting**. [Footage credit and English label guide](media/README.md).*
 
-This is a retrospective of specific work on ProjectZ, not a proposal for a new feature. The account follows actual implementation behaviour and verified interface relationships. Selected code excerpts retain module paths and calling relationships; omitted bodies and shortened interface outlines are labelled.
+## My work
 
-Separately written reference models and tests are supporting material, not original game code or historical validation results. Documentation is in English, with one Chinese README. The [decision rationale](docs/DECISIONS.md) combines my account of the work with the implementation boundaries visible in the code.
+I initiated the building system and developed its gameplay and associated UI. I also developed and maintained building-object interactions and their panels, connecting C++ world operations, Lua interface logic and UMG widgets.
 
-## Three engineering decisions
+This case covers catalogue and placement controls, equipment and crafting workbenches, storage, and the weapon-rack selector.
 
-**1. Make the controls reflect the current world and input context.**
+## Three questions and decisions
 
-The native placement flow publishes available operations; Lua maps them to controls and checks the active input/HUD mode. An invalid confirm attempt can explain the failure without creating an object. This separates useful player feedback from permission to execute. [Placement case](docs/CASE_STUDY.md#1-from-catalogue-selection-to-placement).
+### 1. How should menu controls and world actions stay aligned?
 
-**2. Give a blocked crafting action a meaningful next step.**
+I connected the native placement operation mask to Lua controls and checked the active input and HUD context before dispatching actions. A confirm attempt at an invalid location can explain why placement failed, while native validation prevents object creation.
 
-The equipment-workbench action area distinguishes production in progress, paused work, collectable output, requirements and local crafting. A level requirement opens upgrade guidance; missing materials opens tracking; a carry limit blocks crafting. The included path follows the product widget through the panel and model to native dispatch. [State, actions and trade-offs](docs/WORKBENCH_INTERACTIONS.md).
+This keeps **feedback** and **execution permission** distinct. [Placement path](docs/CASE_STUDY.md#1-from-catalogue-selection-to-placement).
 
-**3. Share presentation while keeping object rules explicit.**
+### 2. What should a crafting button do when the player cannot craft?
 
-I kept workbench composition specialised because weapon progression and category-specific layouts changed within that feature. Storage had a different reuse boundary: stable item/container data with configurable presentation. Missing-material actions reused recipe tracking to preserve a consistent recovery flow. The rack similarly reuses selection presentation while retaining its compatibility rules. [Why these boundaries differ](docs/DECISIONS.md) · [Weapon rack](docs/SHARED_INTERACTIONS.md).
+I distinguished existing production from eligibility for a new craft. Producing, paused and collectable states take precedence; otherwise the action reflects level, material and carry-limit requirements.
 
-The result is a connected feature: players can select and position an object, then use its specialised interface with clear actions and world-bound context.
+A level requirement leads to upgrade guidance, missing materials lead to recipe tracking, and a carry limit blocks crafting. The interface gives the player a useful next step instead of treating every restriction as the same disabled button. [Workbench state and actions](docs/WORKBENCH_INTERACTIONS.md).
 
-## The player experience
+### 3. Where should specialised UI stop and reuse begin?
 
-```mermaid
-flowchart TB
-    A[Browse the building catalogue] --> B[Position or adjust a world object]
-    B --> C[Confirm using contextual controls]
-    C --> D[Interact with the constructed object]
-    D --> E[Equipment or crafting workbench]
-    D --> F[Storage box]
-    D --> G[Weapon-rack item selector]
-```
+I kept workbench composition specialised: weapon progression and category-dependent layouts changed frequently within that feature. Storage instead shared stable item/container conventions and configurable inventory presentation. Material tracking reused a common recipe-based recovery flow; the weapon rack reused selection presentation while retaining its own compatibility rules.
 
-Workbench, storage and rack interactions are alternative uses of constructed objects.
+The boundary follows **the shape of the data and the scope of change**, not visual similarity alone. [Decision rationale](docs/DECISIONS.md) · [Weapon-rack interaction](docs/SHARED_INTERACTIONS.md).
+
+## Outcomes
+
+- Catalogue selection, contextual controls and native validation connect through an explicit operation contract.
+- Crafting actions distinguish ongoing work, collectable output and recovery from unmet requirements.
+- Equipment-specific layout changes stay local, while storage and item selection reuse stable data and interaction conventions.
+
+## Deeper reading
+
+- **Feature and architecture:** [Case study](docs/CASE_STUDY.md) · [Architecture](docs/ARCHITECTURE.md) · [Decision rationale](docs/DECISIONS.md).
+- **Implementation:** [Guided code tour](docs/CODE_TOUR.md) · [Workbench actions](docs/WORKBENCH_INTERACTIONS.md) · [Shared interactions](docs/SHARED_INTERACTIONS.md).
+- **Reliability and cost:** [Debugging](docs/DEBUGGING.md) · [Storage refresh costs](docs/PERFORMANCE.md).
+- **Verification:** [Focused tests — added for this portfolio](docs/TESTING.md).
+- **Evidence scope:** [Historical work, excerpts, tests and footage](docs/EVIDENCE.md).
 
 ## Gameplay screenshots
 
-Five separate states from public gameplay footage, with English captions. Original images and creator watermarks are preserved; these stills illustrate interfaces rather than a continuous click-through. [Sources and label translations](media/README.md).
+<details>
+<summary>Open the five-state gallery with English captions</summary>
 
 ### 1. Building catalogue open
 
-![Building catalogue over the game world, with category tabs and a grid of placeable objects.](media/screenshots/Building_Catalogue.png)
+![Building catalogue over the world with category tabs and a grid of objects.](media/screenshots/Building_Catalogue.png)
 
-**Focus on the bottom catalogue and left-side controls.** The player browses categories while the world remains visible. The selected world piece exposes **Delete** and **Move**.
+The bottom catalogue supports category browsing while the world remains visible. The selected world piece exposes **Delete** and **Move**.
 
 ### 2. World placement / adjustment
 
-![A roof piece outlined in green with confirm, cancel and rotate prompts beside it and material information at the top left.](media/screenshots/Building_Placement.png)
+![Roof-piece placement with confirm, cancel and rotate prompts.](media/screenshots/Building_Placement.png)
 
-With the catalogue closed, the player positions or adjusts a roof piece using **Confirm**, **Cancel**, **Rotate** and **Delete**. Materials and item information remain visible. The available input follows the current UI and building mode, keeping world actions distinct from menu navigation.
+With the catalogue closed, **Confirm**, **Cancel**, **Rotate** and **Delete** accompany material information and world feedback. The available input follows the current UI and building mode, keeping world actions distinct from menu navigation.
 
 ### 3. Equipment workbench — crafting
 
-![Equipment workbench crafting interface with weapon progression rows, locked entries, selected-item details and material requirements.](media/screenshots/Equipment_Workbench.png)
+![Equipment crafting interface with progression rows and material requirements.](media/screenshots/Equipment_Workbench.png)
 
-Interacting with an **equipment workbench** opens this crafting interface. **Weapons / Armour / Accessories / Tools** organise products; the selected item's details and materials appear on the right. The current action reads **Stop crafting**. [Follow the primary-action logic](docs/WORKBENCH_INTERACTIONS.md).
+**Weapons / Armour / Accessories / Tools** organise products. Details and materials appear on the right; the current action reads **Stop crafting**.
 
 ### 4. Crafting workbench — consumables and ammunition
 
-![Crafting workbench with potion and arrow categories, selected arrow details, material counts and quantity controls.](media/screenshots/Crafting_Workbench.png)
+![Crafting workbench with potion and arrow categories and quantity controls.](media/screenshots/Crafting_Workbench.png)
 
-**Potions / Arrows** lead to product details, material requirements and quantity controls. The current action reads **Stop crafting**. This workbench has its own model and panel lifecycle.
+**Potions / Arrows** lead to product details, material requirements and quantity controls. The current action reads **Stop crafting**.
 
 ### 5. Storage box and player inventory
 
-![Open storage box in the world, with box contents on the left and the player's bag and equipment sections on the right.](media/screenshots/Storage_Box.png)
+![Storage box contents on the left and player inventory on the right.](media/screenshots/Storage_Box.png)
 
-The left panel shows box contents with **Quick store** and **Take all**. The right side shows the player's inventory. The chest remains visible between them, retaining the world context of the transfer.
+**Quick store** and **Take all** accompany the box contents. The player's inventory appears on the right, with the chest still visible in the world.
 
-## Explore the implementation
+[Footage sources and label translations](media/README.md). These are separately labelled stills.
 
-Start with [placement and workbench decisions](docs/CASE_STUDY.md), then follow the [guided code tour](docs/CODE_TOUR.md). Supporting chapters cover [shared interactions](docs/SHARED_INTERACTIONS.md), [storage refresh costs](docs/PERFORMANCE.md), and [debugging / remaining edge cases](docs/DEBUGGING.md). The separate semi-finished-goods queue and weapon rack are code-only examples.
+</details>
 
-## Scope and verification
-
-This source-reading portfolio contains selected implementations, interface outlines and newly written focused tests. Shared infrastructure was maintained collaboratively by the team. Omitted bodies are labelled; the full Unreal runtime, services and binary widgets are external. [Dependencies and implementation map](docs/DEPENDENCIES.md) · [Test results and validation boundaries](docs/TESTING.md).
-
-The tests establish selected behaviour, not measured shipping performance or full in-engine validation. Game visuals and project material remain subject to their respective rights.
-
-**Related cases:** [Multiplayer, teams & support UI](https://github.com/seak123/multiplayer-ui-portfolio) · [Mechanical workers, world-space UI & authoring](https://github.com/seak123/mechanical-workers-ui-portfolio).
+**Related cases:** [Multiplayer UI](https://github.com/seak123/multiplayer-ui-portfolio) · [Mechanical workers and world-space UI](https://github.com/seak123/mechanical-workers-ui-portfolio).
