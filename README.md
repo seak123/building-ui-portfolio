@@ -1,20 +1,62 @@
 # Building UI: from placement to useful objects
 
-![Equipment-workbench UI with weapon progression, product categories, selected-item details and crafting materials.](media/screenshots/Equipment_Workbench.png)
-
-From browsing and placing an object to crafting equipment or transferring items, the UI connects the player's next action to the current world context.
+A connected building feature: browse and place an object, then use its crafting, storage or item-selection interface in the world.
 
 **Evan (Yaxin) Ge · C++ / Lua / UMG · ProjectZ**
 
-[中文 README](docs/README.zh-CN.md) · [Screenshots](#gameplay-screenshots) · [Explore the work](#deeper-reading)
+[中文 README](docs/README.zh-CN.md) · [Feature screenshots](#gameplay-screenshots) · [My work](#my-work) · [Decisions](#three-questions-and-decisions) · [Code and tests](#deeper-reading)
 
-*Equipment workbench: interacting with a constructed workbench opens product categories, progression rows, item details and material requirements. The action shown is **Stop crafting**. [Footage credit and English label guide](media/README.md).*
+## Gameplay screenshots
+
+Three complementary views show the feature's scope. Each image links to the relevant implementation story. [All five screenshots, English labels and footage credits](media/README.md).
+
+### Building catalogue and contextual controls
+
+![Building catalogue at the bottom of the world view, with categories and contextual move and delete controls.](media/screenshots/Building_Catalogue.png)
+
+**What the player does:** browse categories and select a placeable object while the world remains visible. The selected world piece exposes **Delete** and **Move**; menu visibility and building mode determine the available controls.
+
+**Work behind this view:** catalogue selection and cancellation, input/HUD context checks, and the connection between native placement operations and Lua controls.
+
+[Feature: catalogue to placement](docs/CASE_STUDY.md#1-from-catalogue-selection-to-placement) · [Code: selection and input](docs/CODE_TOUR.md#1-select-an-object) · [See the separate placement-state screenshot](media/README.md#world-placement--adjustment)
+
+### Equipment workbench: progression, requirements and crafting
+
+![Equipment-workbench interface with weapon progression rows, product categories, selected-item details and materials.](media/screenshots/Equipment_Workbench.png)
+
+**What the player does:** interact with an equipment workbench, choose among **Weapons / Armour / Accessories / Tools**, inspect a progression path and act on the selected product. The image shows **Stop crafting**.
+
+**Work behind this view:** a specialised panel layout, product selection and material data, and an action area that distinguishes ongoing production, collection, requirements and recovery actions.
+
+[Feature: workbench states and actions](docs/WORKBENCH_INTERACTIONS.md) · [Decision: specialised layout versus shared UI](docs/DECISIONS.md#1-keep-workbench-composition-specialised) · [Code: action to model to native dispatch](docs/CODE_TOUR.md#7-follow-the-equipment-workbench-action-end-to-end)
+
+### Storage box: shared inventory interaction in world context
+
+![Storage-box contents on the left and the player's inventory on the right, with the open chest visible between them.](media/screenshots/Storage_Box.png)
+
+**What the player does:** compare box contents with their own inventory and transfer items through individual or bulk actions such as **Quick store** and **Take all**.
+
+**Work behind this view:** box/bag composition, container and slot identity, transfer-command routing, and interaction lifetime when the player moves away or changes the active object.
+
+[Feature: gestures and transfer rules](docs/CASE_STUDY.md#4-storage-several-gestures-one-transfer-boundary) · [Code: storage path](docs/CODE_TOUR.md#5-open-and-use-storage) · [Performance: slot-record reuse](docs/PERFORMANCE.md)
+
+**More views and features — direct links:**
+
+- [World placement / adjustment — screenshot and controls](media/README.md#world-placement--adjustment): confirm, cancel and rotate a preview with material and validity feedback.
+- [Consumable / ammunition workbench — screenshot and description](media/README.md#crafting-workbench): potion/arrow categories, selected-product details, material counts and quantity controls. [Workbench lifecycle](docs/WORKBENCH_INTERACTIONS.md).
+- [Weapon rack — feature and code](docs/SHARED_INTERACTIONS.md): a shared item selector with rack-specific filtering and source-slot identity; code-only example.
+- [Processing queue — feature and actions](docs/CASE_STUDY.md#3-a-processing-station-with-a-meaningful-primary-action): recipe eligibility, quantity, queue capacity and production progress; code-only example.
 
 ## My work
 
-I initiated the building system and developed its gameplay and associated UI. I also developed and maintained building-object interactions and their panels, connecting C++ world operations, Lua interface logic and UMG widgets.
+I initiated the building system and developed its gameplay and associated UI. My work also included developing and maintaining the interaction logic and panels used by constructed objects, across C++ world operations, Lua interface logic and UMG widgets.
 
-This case covers catalogue and placement controls, equipment and crafting workbenches, storage, and the weapon-rack selector.
+- **Catalogue and placement:** connected object selection, cancellation, category changes, world previews and contextual actions; kept shortcuts and buttons aligned with the active input and building mode.
+- **Workbench interactions:** worked on equipment and crafting interfaces, product details and materials, and the routing of start, cancel and collect actions. Kept existing production state distinct from eligibility for a new craft.
+- **Player guidance:** connected level restrictions to workbench-upgrade guidance and missing ingredients to common recipe tracking, preserving the current workbench or recipe context.
+- **Storage and item selection:** developed and maintained box/bag interaction paths and object-specific selectors, retaining container, slot and world-object identity through gestures and requests.
+- **Lifecycle and maintenance:** handled panel/world context, state refreshes and interaction cleanup, and investigated stale data and redundant storage refresh work.
+- **UI integration and iteration:** connected Lua models, UMG controls, configuration and events so rule, layout and animation changes could follow the existing content workflow.
 
 ## Three questions and decisions
 
@@ -49,44 +91,5 @@ The boundary follows **the shape of the data and the scope of change**, not visu
 - **Reliability and cost:** [Debugging](docs/DEBUGGING.md) · [Storage refresh costs](docs/PERFORMANCE.md).
 - **Verification:** [Focused tests — added for this portfolio](docs/TESTING.md).
 - **Evidence scope:** [Historical work, excerpts, tests and footage](docs/EVIDENCE.md).
-
-## Gameplay screenshots
-
-<details>
-<summary>Open the five-state gallery with English captions</summary>
-
-### 1. Building catalogue open
-
-![Building catalogue over the world with category tabs and a grid of objects.](media/screenshots/Building_Catalogue.png)
-
-The bottom catalogue supports category browsing while the world remains visible. The selected world piece exposes **Delete** and **Move**.
-
-### 2. World placement / adjustment
-
-![Roof-piece placement with confirm, cancel and rotate prompts.](media/screenshots/Building_Placement.png)
-
-With the catalogue closed, **Confirm**, **Cancel**, **Rotate** and **Delete** accompany material information and world feedback. The available input follows the current UI and building mode, keeping world actions distinct from menu navigation.
-
-### 3. Equipment workbench — crafting
-
-![Equipment crafting interface with progression rows and material requirements.](media/screenshots/Equipment_Workbench.png)
-
-**Weapons / Armour / Accessories / Tools** organise products. Details and materials appear on the right; the current action reads **Stop crafting**.
-
-### 4. Crafting workbench — consumables and ammunition
-
-![Crafting workbench with potion and arrow categories and quantity controls.](media/screenshots/Crafting_Workbench.png)
-
-**Potions / Arrows** lead to product details, material requirements and quantity controls. The current action reads **Stop crafting**.
-
-### 5. Storage box and player inventory
-
-![Storage box contents on the left and player inventory on the right.](media/screenshots/Storage_Box.png)
-
-**Quick store** and **Take all** accompany the box contents. The player's inventory appears on the right, with the chest still visible in the world.
-
-[Footage sources and label translations](media/README.md). These are separately labelled stills.
-
-</details>
 
 **Related cases:** [Multiplayer UI](https://github.com/seak123/multiplayer-ui-portfolio) · [Mechanical workers and world-space UI](https://github.com/seak123/mechanical-workers-ui-portfolio).
