@@ -4,7 +4,17 @@ A connected building feature: browse and place an object, then use its crafting,
 
 **Evan (Yaxin) Ge · C++ / Lua / UMG · ProjectZ**
 
-[中文 README](docs/README.zh-CN.md) · [Feature screenshots](#gameplay-screenshots) · [My work](#my-work) · [Decisions](#three-questions-and-decisions) · [Code and tests](#deeper-reading)
+[中文 README](docs/README.zh-CN.md) · [System background](#system-background) · [Feature screenshots](#gameplay-screenshots) · [My work](#my-work) · [Decisions](#three-questions-and-decisions) · [Code and tests](#deeper-reading)
+
+## System background
+
+ProjectZ's building feature let players construct structures and functional objects, then use those objects as part of gameplay. Players opened a catalogue, selected a piece, positioned or snapped its preview in the world, and confirmed placement. They could also select existing pieces to move or remove them. Once built, workbenches provided crafting and production, storage boxes provided inventory transfers, and weapon racks provided item selection.
+
+The requirements connected several kinds of interaction: world placement needed clear controls and validity feedback; crafting needed product details, requirements and job status; storage needed consistent item handling. These screens also had to keep track of the particular object being used and react when the player left it. Designers needed to adjust recipes and rules, while UI artists iterated on layouts and animation.
+
+I initiated the building system and developed its gameplay and associated UI using Unreal Engine 4, C++, Lua and UMG. Native systems handled world operations and gameplay data; Lua connected that data and player actions to UMG controls through the existing project UI framework.
+
+[Player journey, requirements and responsibilities](docs/CASE_STUDY.md#feature-background) · [Engineering context](docs/ARCHITECTURE.md#engineering-context)
 
 ## Gameplay screenshots
 
@@ -49,14 +59,14 @@ Three complementary views show the feature's scope. Each image links to the rele
 
 ## My work
 
-I initiated the building system and developed its gameplay and associated UI. My work also included developing and maintaining the interaction logic and panels used by constructed objects, across C++ world operations, Lua interface logic and UMG widgets.
+My responsibility covered the feature from building an object to using it. I initiated the building system, developed the connected gameplay and UI, and continued developing and maintaining the interaction logic and panels used by constructed objects.
 
-- **Catalogue and placement:** connected object selection, cancellation, category changes, world previews and contextual actions; kept shortcuts and buttons aligned with the active input and building mode.
-- **Workbench interactions:** worked on equipment and crafting interfaces, product details and materials, and the routing of start, cancel and collect actions. Kept existing production state distinct from eligibility for a new craft.
-- **Player guidance:** connected level restrictions to workbench-upgrade guidance and missing ingredients to common recipe tracking, preserving the current workbench or recipe context.
-- **Storage and item selection:** developed and maintained box/bag interaction paths and object-specific selectors, retaining container, slot and world-object identity through gestures and requests.
-- **Lifecycle and maintenance:** handled panel/world context, state refreshes and interaction cleanup, and investigated stale data and redundant storage refresh work.
-- **UI integration and iteration:** connected Lua models, UMG controls, configuration and events so rule, layout and animation changes could follow the existing content workflow.
+- **Building flow and controls:** worked across the native placement flow and Lua catalogue, connecting selection, previews, placement checks, cancellation, move/remove actions and contextual feedback. Kept shortcuts and buttons aligned with the current input and building mode.
+- **Crafting and processing:** developed and maintained workbench interfaces, selected-product details, materials, production-state presentation and start/cancel/collect paths. Kept an existing job separate from the requirements for starting a new one.
+- **Storage and weapon-rack interactions:** connected world-object entry points to box/bag views and item selectors. Carried object, container and slot identity through individual, drag/drop and bulk actions and their native requests.
+- **UI design decisions:** kept equipment progression and category layouts in specialised panels, reused stable inventory and item-selection conventions, and connected missing materials to shared recipe tracking and level requirements to upgrade guidance.
+- **Lifecycle and maintenance:** handled opening and leaving an object interaction, panel cleanup and state refreshes. Worked with gameplay-owned production/container data so closing a view did not become an unintended gameplay command.
+- **Content integration:** connected configuration, Lua models, events and UMG bindings so designers could iterate on conditions and UI artists on layout and animation within the established project workflow.
 
 ## Three questions and decisions
 
@@ -86,6 +96,9 @@ The boundary follows **the shape of the data and the scope of change**, not visu
 
 ## Deeper reading
 
+For a walkthrough: **system and player journey → my work → placement or object interaction → design decisions and code**.
+
+- **Start with the background:** [Feature, requirements and responsibilities](docs/CASE_STUDY.md#feature-background) · [C++ / Lua / UMG roles](docs/ARCHITECTURE.md#engineering-context).
 - **Feature and architecture:** [Case study](docs/CASE_STUDY.md) · [Architecture](docs/ARCHITECTURE.md) · [Decision rationale](docs/DECISIONS.md).
 - **Implementation:** [Guided code tour](docs/CODE_TOUR.md) · [Workbench actions](docs/WORKBENCH_INTERACTIONS.md) · [Shared interactions](docs/SHARED_INTERACTIONS.md).
 - **Reliability and cost:** [Debugging](docs/DEBUGGING.md) · [Storage refresh costs](docs/PERFORMANCE.md).

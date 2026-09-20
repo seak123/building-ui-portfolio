@@ -2,13 +2,39 @@
 
 [Overview](../README.md) · [Architecture](ARCHITECTURE.md)
 
-## Context
+<a id="context"></a>
 
-Players choose objects from a catalogue, place them in a three-dimensional world and then use what they built. The UI therefore spans catalogue navigation, placement feedback, HUD/input modes, world interactions and specialised panels. A processing station exposes recipes and a queue; a storage box exposes containers and transfer actions.
+## Feature background
 
-I initiated the building system and worked across gameplay and its associated UI. I also developed and maintained constructed-object interactions and panels. The key responsibility was connecting those layers into usable features, using the team's shared infrastructure.
+Building in ProjectZ connected construction with the use of the objects players built. Structural pieces formed the environment; functional objects opened crafting, production, storage or item-selection interactions. The feature therefore included both actions in the world and the interfaces used to control and understand them.
 
-Three decisions organise this case: derive controls from the current interaction context; give crafting requirements meaningful actions; share presentation without hiding object-specific commands.
+### What the player does
+
+- **Build or adjust an object.** Enter building mode, browse the catalogue, select a piece, position or snap its preview and confirm placement. Existing pieces can be selected for move/remove actions. The catalogue and placement view have different controls while the world remains visible.
+- **Use a constructed object.** Interacting with an equipment workbench opens product categories, progression, requirements and actions; a consumable workbench has its own crafting presentation. Processing stations show recipes and queued work. Storage boxes put box contents beside the player's inventory, while weapon racks open an eligible-item selector.
+- **Respond to conditions and changing state.** Placement may be invalid, ingredients may be missing, a station may need upgrading, or production may already be running or ready to collect. The interface needs to explain the current state and offer the appropriate next action.
+
+The [five screenshots](../media/README.md) show the catalogue, placement, equipment workbench, consumable workbench and storage. Processing queues and weapon-rack selection are supporting code examples.
+
+### Requirements and engineering context
+
+The system had to connect these workflows while allowing their rules and layouts to differ.
+
+- **Controls follow the active context.** Menu navigation, a held preview and an existing world selection expose different actions. Buttons and shortcuts must agree with the current building/HUD mode and placement rules.
+- **Feedback explains the next step.** A failed placement needs a reason. Missing ingredients can lead to material tracking; a level requirement can lead to upgrade guidance. Existing production and collectable output must remain distinct from the requirements for starting another craft.
+- **Every interaction keeps its identity.** A panel opens for a particular world object and action. Item transfers also carry container and slot information. Leaving the object, changing selection and receiving an update all need that context.
+- **Gameplay owns ongoing work and items.** Panels display production and container state and send requests. A local progress display does not award an item, and closing a panel does not itself cancel a queued job.
+- **Content can keep evolving.** Designers adjust object and recipe conditions; UI artists change layouts and animation. Workbench-specific layouts can evolve locally, while storage and selectors reuse stable item conventions through the existing UI framework.
+
+The implementation used Unreal Engine 4 with C++ world and gameplay systems, Lua models and interface behaviours, and UMG widgets. The feature integrated existing inventory, recipes, configuration and UI facilities. [Layer responsibilities](ARCHITECTURE.md#engineering-context).
+
+### My responsibilities
+
+I initiated the building system and developed its gameplay and associated UI. That work connected the native building flow to catalogue selection, contextual controls and player feedback. I also developed and maintained constructed-object interaction logic and panels, including workbench actions, storage transfers and shared item selection.
+
+My feature-level decisions included where to keep specialised panels, what inventory-shaped presentation to reuse, and how unmet requirements should guide the next player action. I connected these decisions to Lua/UMG bindings, native requests, configuration and lifecycle handling so they fitted the team's existing content workflow.
+
+The sections below expand three parts of that work: keeping placement controls consistent, making production states actionable, and sharing object interfaces where the data and interaction rules support it.
 
 ## 1. From catalogue selection to placement
 

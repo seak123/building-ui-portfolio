@@ -2,6 +2,19 @@
 
 [Overview](../README.md) · [Code tour](CODE_TOUR.md) · [Dependencies](DEPENDENCIES.md)
 
+## Engineering context
+
+This was an Unreal Engine 4 gameplay feature with UI across world placement and constructed-object interactions. The player-facing requirements are introduced in the [feature background](CASE_STUDY.md#feature-background).
+
+- **C++ building and gameplay systems** handle held/selected world objects, placement evaluation and operation availability, object interactions, production state and inventory request paths. A client placement check provides feedback; it is not a substitute for server validation.
+- **Lua feature models and behaviours** keep catalogue or recipe selection, connect an open panel to its world-object context, derive visible actions from gameplay data and forward player intent. They use events, queries and scoped checks to keep the interface current.
+- **UMG widgets and the existing UI framework** provide layouts, controls, animations, bindings, frames and lists. Workbench, storage and selector interfaces use those facilities with their own composition and interaction rules.
+- **Object and recipe configuration** supplies categories, requirements and item relationships. This lets content changes flow through established data and presentation paths while feature code handles the decisions those values drive.
+
+I worked across the building gameplay and these interface connections. The boundaries below explain how a player action keeps its mode, object and item context as it moves between those layers.
+
+## System overview
+
 ```mermaid
 flowchart TB
     U[UMG controls and input bindings] --> L[Lua models and view behaviours]
