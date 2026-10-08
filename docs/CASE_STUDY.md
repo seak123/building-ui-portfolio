@@ -2,6 +2,8 @@
 
 [Overview](../README.md) · [Architecture](ARCHITECTURE.md)
 
+The following case follows the later player-facing placement and object-interaction paths. The wider system is covered in [System design](SYSTEM_DESIGN.md), [early spatial rules](SPATIAL_RULES.md), [lifecycles and LiteMass](LIFECYCLE_AND_SCALE.md), and [authoring workflows](AUTHORING_WORKFLOW.md).
+
 <a id="context"></a>
 
 ## Feature background
@@ -33,6 +35,8 @@ The implementation used Unreal Engine 4 with C++ world and gameplay systems, Lua
 I initiated the building system and developed its gameplay and associated UI. That work connected the native building flow to catalogue selection, contextual controls and player feedback. I also developed and maintained constructed-object interaction logic and panels, including workbench actions, storage transfers and shared item selection.
 
 My feature-level decisions included where to keep specialised panels, what inventory-shaped presentation to reuse, and how unmet requirements should guide the next player action. I connected these decisions to Lua/UMG bindings, native requests, configuration and lifecycle handling so they fitted the team's existing content workflow.
+
+Beyond these screens, I developed the building framework and rule model, worked on persistent data and streaming integration, and built configuration/debugging and building-layout authoring workflows. Later work included building-side LiteMass integration and dynamic-navigation optimisation. Those parts explain how the same player-facing feature could keep evolving in content, world size and runtime representation.
 
 The sections below expand three parts of that work: keeping placement controls consistent, making production states actionable, and sharing object interfaces where the data and interaction rules support it.
 

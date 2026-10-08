@@ -4,6 +4,8 @@
 
 This chapter records my reasoning from the actual work. The linked excerpts show implementation relationships; complete widget assets and configuration bodies are omitted.
 
+These decisions concern the later object-interaction UI. For broader framework decisions, see [separating responsibilities](SYSTEM_DESIGN.md), [spatial slots versus object-owned sockets](SPATIAL_RULES.md#why-spatial-slots-rather-than-only-object-owned-sockets), and [logical buildings versus runtime representation](LIFECYCLE_AND_SCALE.md).
+
 ## Context
 
 Constructed objects shared an interaction entry point, but their interfaces did not all have the same structure. The decision was not simply whether to reuse UI. It was **which parts were stable enough to share, and where future changes were likely to remain local**.

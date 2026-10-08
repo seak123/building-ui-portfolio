@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720" role="img" aria-labelledby="title desc">
+  <title id="title">Early building model: separate structural and furniture granularity</title>
+  <desc id="desc">Two schematic grids compare regular structural units with finer furniture occupancy. Structural pieces reference typed pivots and spaces; smaller furniture footprints use finer cells. Logical addressability does not require eagerly allocating every possible cell. The diagrams are not to scale and do not show measured memory use.</desc>
+  <defs>
+    <pattern id="coarse" x="60" y="215" width="110" height="85" patternUnits="userSpaceOnUse"><rect width="110" height="85" fill="#f8fafc" stroke="#a8bbcb" stroke-width="2"/></pattern>
+    <pattern id="fine" x="735" y="215" width="27.5" height="21.25" patternUnits="userSpaceOnUse"><rect width="27.5" height="21.25" fill="#f8fafc" stroke="#c0ced9" stroke-width="1"/></pattern>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #183247; }
+      .title { font-size: 34px; font-weight: 700; }
+      .heading { font-size: 27px; font-weight: 700; }
+      .body { font-size: 24px; }
+      .muted { fill: #506478; }
+    </style>
+  </defs>
+  <rect width="1400" height="720" fill="#ffffff"/>
+  <text x="40" y="58" class="title">Match spatial granularity to the kind of content</text>
+  <text x="40" y="99" class="body muted">Reconstructed design illustration · conceptual top-down views, not exact dimensions</text>
+  <rect x="30" y="130" width="655" height="406" rx="16" fill="#f0f5f9"/>
+  <rect x="705" y="130" width="665" height="406" rx="16" fill="#f0f5f9"/>
+  <text x="55" y="173" class="heading">Structure: regular units and boundaries</text>
+  <text x="730" y="173" class="heading">Furniture: finer occupancy footprints</text>
+  <rect x="60" y="215" width="550" height="255" fill="url(#coarse)" stroke="#718a9f" stroke-width="2"/>
+  <rect x="170" y="300" width="220" height="85" fill="#aad5ed" fill-opacity="0.8"/>
+  <path d="M170 385 L390 385 L390 300" fill="none" stroke="#bd8426" stroke-width="12"/>
+  <circle cx="170" cy="385" r="7" fill="#238357"/><circle cx="280" cy="385" r="7" fill="#238357"/><circle cx="390" cy="385" r="7" fill="#238357"/>
+  <text x="55" y="513" class="body">Typed edges, faces and volume; shared addresses</text>
+  <rect x="735" y="215" width="550" height="255" fill="url(#fine)" stroke="#718a9f" stroke-width="2"/>
+  <rect x="845" y="278.75" width="137.5" height="85" fill="#aad5ed" fill-opacity="0.85" stroke="#1678a6" stroke-width="3"/>
+  <rect x="1065" y="321.25" width="55" height="42.5" fill="#f5d69e" stroke="#bd8426" stroke-width="3"/>
+  <text x="730" y="513" class="body">Smaller footprints without shrinking every unit</text>
+  <rect x="30" y="560" width="1340" height="130" rx="16" fill="#eaf2f8"/>
+  <text x="55" y="603" class="heading">A precision / bookkeeping trade-off</text>
+  <text x="55" y="643" class="body">Finer occupancy supports furniture placement, but creates more cells to track and validate.</text>
+  <text x="55" y="677" class="body muted">Allocate and release the needed records; logical positions do not imply a fully allocated world grid.</text>
+</svg>

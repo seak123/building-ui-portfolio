@@ -2,7 +2,7 @@
 
 The suite executes selected methods from the included Lua modules with controlled dependencies. It is not a replacement implementation of the feature, an Unreal integration test or a device benchmark. Tests and instrumentation are new portfolio material.
 
-Local verification on 13 September 2026: **50 tests passed**, using Lupa 2.6. All 22 included Lua files passed syntax compilation; all five gallery images passed PNG dimension/link checks. The suite covers workbench integration, the weapon-rack selector, and supporting placement, storage and production excerpts. Native C++ and Unreal integration were not executed.
+Local verification on 8 October 2026: **57 tests passed**, using Lupa 2.6. All 22 included Lua files passed syntax compilation; all five gallery images passed PNG dimension/link checks. The suite covers workbench integration, the weapon-rack selector, supporting placement, storage and production excerpts, and seven documentation-integrity checks. Native C++, Unreal integration, persistence, LiteMass and navigation were not executed.
 
 ## Run
 
@@ -31,7 +31,11 @@ python -m unittest discover -s tests -v
 - Upgrade guidance and material tracking; panel/model event routing; current-action and carry-limit checks; deferred confirmation.
 - Native queue request versus local progress start, local interruption, object-scoped cancel/collect arguments and state-driven polling.
 - Five full-resolution PNG files and their gallery links.
+- New architecture chapters linked from both homepages; local file and Markdown-fragment targets; preservation of the three primary gameplay views.
+- Accessible, self-contained SVG structure; historical-version labels and gallery links; exclusions for private source pointers and original internal presentation media.
 - Characterisation of the shared cooldown setter's early return; a passing test records existing behaviour, not a successful cooldown implementation.
+
+The two explanatory SVGs were also rendered and visually inspected for readable labels and clipping. These checks validate the portfolio's documents and illustrations, not the historical building-rule algorithms they describe.
 
 ## Instrumentation boundary
 

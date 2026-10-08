@@ -81,4 +81,26 @@ Labels: 储物箱 — Storage box; 背包道具 — Bag items; 快速收纳 — 
 
 The weapon-rack selector and the separate semi-finished-goods production queue remain code-only examples.
 
+## Design illustrations
+
+These editable SVGs were redrawn from the author's early building-system design description and contemporary design material. They explain the **early fixed-space model**, not the later free-form version in the five gameplay screenshots above. They are conceptual technical illustrations, not captured game or editor screens; dimensions and grid subdivisions are schematic.
+
+### Spatial slots and one wall
+
+![Conceptual SpaceUnit and wall requirements, provided capabilities and occupancy.](diagrams/spatial-slots-and-wall.svg)
+
+Caption: “The spatial model defines addressable slots. Each building declares the support it requires, the capabilities it provides and the spaces it occupies; these are separate relationships.”
+
+[Full diagram](diagrams/spatial-slots-and-wall.svg) · [Model, placement/removal and socket trade-offs](../docs/SPATIAL_RULES.md).
+
+### Structural and furniture granularity
+
+![Schematic structural grid beside finer furniture occupancy.](diagrams/occupancy-granularity.svg)
+
+Caption: “Structural assembly and furniture placement use different spatial granularity. Finer occupancy supports smaller footprints, with additional state and validation cost.”
+
+[Full diagram](diagrams/occupancy-granularity.svg) · [Granularity and visual debugging](../docs/SPATIAL_RULES.md#different-granularity-for-structure-and-furniture) · [Configuration workflow](../docs/AUTHORING_WORKFLOW.md).
+
+Original internal slides and prototype recordings are not distributed in this repository. [Historical design and media scope](../docs/EVIDENCE.md#historical-system-design).
+
 Project visuals and creator overlays remain the property of their respective rights holders. Attribution here identifies visible marks, not permission to redistribute the underlying footage.

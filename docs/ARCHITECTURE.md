@@ -2,6 +2,8 @@
 
 [Overview](../README.md) · [Code tour](CODE_TOUR.md) · [Dependencies](DEPENDENCIES.md)
 
+This chapter focuses on the later **UI-to-gameplay interaction contracts** represented by the code excerpts. For the full building framework, start with [System design](SYSTEM_DESIGN.md); for earlier rule modelling, see [Spatial rules](SPATIAL_RULES.md).
+
 ## Engineering context
 
 This was an Unreal Engine 4 gameplay feature with UI across world placement and constructed-object interactions. The player-facing requirements are introduced in the [feature background](CASE_STUDY.md#feature-background).

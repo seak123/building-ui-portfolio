@@ -2,6 +2,8 @@
 
 [Overview](../README.md) · [Architecture](ARCHITECTURE.md)
 
+These excerpts follow the later placement and object-interaction implementation. The new [whole-system](SYSTEM_DESIGN.md), [early rule-model](SPATIAL_RULES.md) and [LiteMass](LIFECYCLE_AND_SCALE.md) chapters explain the broader historical work; they are not additional runnable exports of those systems. [Implementation scope](EVIDENCE.md).
+
 For a short review, read **steps 2–3 for input/placement**, then **step 7 for the equipment-workbench action path**. Storage and the shared selector provide supporting examples.
 
 ## 1. Select an object

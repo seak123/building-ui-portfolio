@@ -1,10 +1,10 @@
-# Building UI: from placement to useful objects
+# Building system: from placement to persistent worlds
 
-A connected building feature: browse and place an object, then use its crafting, storage or item-selection interface in the world.
+A connected gameplay and UI feature: choose and place an object, preserve it in the world, then use its crafting, storage or item-selection interface.
 
 **Evan (Yaxin) Ge · C++ / Lua / UMG · ProjectZ**
 
-[中文 README](docs/README.zh-CN.md) · [System background](#system-background) · [Feature screenshots](#gameplay-screenshots) · [My work](#my-work) · [Decisions](#three-questions-and-decisions) · [Code and tests](#deeper-reading)
+[中文 README](docs/README.zh-CN.md) · [System background](#system-background) · [Feature screenshots](#gameplay-screenshots) · [My work](#my-work) · [System design](#system-design-and-evolution) · [Code and tests](#deeper-reading)
 
 ## System background
 
@@ -14,7 +14,9 @@ The requirements connected several kinds of interaction: world placement needed 
 
 I initiated the building system and developed its gameplay and associated UI using Unreal Engine 4, C++, Lua and UMG. Native systems handled world operations and gameplay data; Lua connected that data and player actions to UMG controls through the existing project UI framework.
 
-[Player journey, requirements and responsibilities](docs/CASE_STUDY.md#feature-background) · [Engineering context](docs/ARCHITECTURE.md#engineering-context)
+The wider system also had to preserve buildings beyond an individual interaction or loaded area, support content-authoring workflows, and remain practical as the world accumulated more objects. Its design evolved from an early fixed-space, modular building model to later free-form construction, streaming-aware persistence and batched runtime representation.
+
+[Player journey and responsibilities](docs/CASE_STUDY.md#feature-background) · [Whole-system design](docs/SYSTEM_DESIGN.md) · [C++ / Lua / UMG integration](docs/ARCHITECTURE.md#engineering-context)
 
 ## Gameplay screenshots
 
@@ -52,8 +54,8 @@ Three complementary views show the feature's scope. Each image links to the rele
 
 **More views and features — direct links:**
 
-- [World placement / adjustment — screenshot and controls](media/README.md#world-placement--adjustment): confirm, cancel and rotate a preview with material and validity feedback.
-- [Consumable / ammunition workbench — screenshot and description](media/README.md#crafting-workbench): potion/arrow categories, selected-product details, material counts and quantity controls. [Workbench lifecycle](docs/WORKBENCH_INTERACTIONS.md).
+- [World placement / adjustment — screenshot and controls](media/README.md#world-placement--adjustment): confirm, cancel and rotate a preview with material and validity feedback. [Full image](media/screenshots/Building_Placement.png).
+- [Consumable / ammunition workbench — screenshot and description](media/README.md#crafting-workbench): potion/arrow categories, selected-product details, material counts and quantity controls. [Full image](media/screenshots/Crafting_Workbench.png) · [Workbench lifecycle](docs/WORKBENCH_INTERACTIONS.md).
 - [Weapon rack — feature and code](docs/SHARED_INTERACTIONS.md): a shared item selector with rack-specific filtering and source-slot identity; code-only example.
 - [Processing queue — feature and actions](docs/CASE_STUDY.md#3-a-processing-station-with-a-meaningful-primary-action): recipe eligibility, quantity, queue capacity and production progress; code-only example.
 
@@ -61,12 +63,37 @@ Three complementary views show the feature's scope. Each image links to the rele
 
 My responsibility covered the feature from building an object to using it. I initiated the building system, developed the connected gameplay and UI, and continued developing and maintaining the interaction logic and panels used by constructed objects.
 
+- **System design and rules:** separated player input, the client building flow, shared rule checks, object management and server persistence. Implemented the early spatial-slot model and evolved the building rules as the gameplay changed.
 - **Building flow and controls:** worked across the native placement flow and Lua catalogue, connecting selection, previews, placement checks, cancellation, move/remove actions and contextual feedback. Kept shortcuts and buttons aligned with the current input and building mode.
 - **Crafting and processing:** developed and maintained workbench interfaces, selected-product details, materials, production-state presentation and start/cancel/collect paths. Kept an existing job separate from the requirements for starting a new one.
 - **Storage and weapon-rack interactions:** connected world-object entry points to box/bag views and item selectors. Carried object, container and slot identity through individual, drag/drop and bulk actions and their native requests.
 - **UI design decisions:** kept equipment progression and category layouts in specialised panels, reused stable inventory and item-selection conventions, and connected missing materials to shared recipe tracking and level requirements to upgrade guidance.
 - **Lifecycle and maintenance:** handled opening and leaving an object interaction, panel cleanup and state refreshes. Worked with gameplay-owned production/container data so closing a view did not become an unintended gameplay command.
 - **Content integration:** connected configuration, Lua models, events and UMG bindings so designers could iterate on conditions and UI artists on layout and animation within the established project workflow.
+- **Persistence and scale:** managed building data separately from its runtime representation, integrated saving/restoration with server streaming regions, and worked on the building-side integration of LiteMass for logical entities, replication and batched representation.
+- **Authoring and performance:** developed building configuration/debugging and layout-authoring workflows, including save/edit/export and later player blueprints. Worked with the tools team on level integration, and optimised dynamic-navigation work triggered by changes in the world.
+
+## System design and evolution
+
+I started from one complete action: **choose → preview and adjust → validate → create → preserve**. Input/UI communicates intent, the building flow manages the current operation, and rules serve both client feedback and server checks. Object management provides gameplay operations; server data handles saving and restoring. These responsibilities have different reasons to change and different lifetimes.
+
+[Walk through the five responsibilities and their interfaces](docs/SYSTEM_DESIGN.md).
+
+### Early rules: spatial slots, dependencies and occupancy
+
+The early version used a fixed building space. Instead of growing a list of special relationships between walls, floors and stairs, I composed objects from **required/provided Pivots** and **occupied Spaces**. Placement and removal could then operate on explicit spatial relationships.
+
+[![Reconstructed illustration of spatial slots and a wall's requirements, capabilities and occupancy.](media/diagrams/spatial-slots-and-wall.svg)](docs/SPATIAL_RULES.md)
+
+*Early-version design illustration, redrawn for this portfolio. The gameplay screenshots above show the later version.*
+
+[Model and wall example](docs/SPATIAL_RULES.md) · [Structural versus furniture granularity](docs/SPATIAL_RULES.md#different-granularity-for-structure-and-furniture) · [Spatial slots versus object-owned sockets](docs/SPATIAL_RULES.md#why-spatial-slots-rather-than-only-object-owned-sockets)
+
+### Persistent data, runtime scale and content workflows
+
+- **Data survives a representation change.** Moving from player-owned records to server streaming regions did not need to redefine the preview interaction. Later, simple buildings could use logical data and shared representation through LiteMass, while complex functional buildings retained Actors. [Lifecycle, LiteMass and one wall's full path](docs/LIFECYCLE_AND_SCALE.md).
+- **Content needs an end-to-end workflow.** Designers could construct, save, reopen and export a layout, then place it through the editor pipeline. The tools team owned the level build/export stage; later player blueprints extended the runtime layout workflow. [Authoring and responsibilities](docs/AUTHORING_WORKFLOW.md).
+- **World changes have downstream costs.** Navigation work required both scheduling/coalescing and reductions in collected collision geometry, with path quality checked alongside cost. [Navigation and UI performance work](docs/PERFORMANCE.md#dynamic-navigation-and-world-change-cost).
 
 ## Three questions and decisions
 
@@ -90,18 +117,23 @@ The boundary follows **the shape of the data and the scope of change**, not visu
 
 ## Outcomes
 
+- The early structural/furniture building model worked through common dependency and occupancy rules; visual debugging made configuration relationships inspectable.
+- Rules, persistence and runtime representation could evolve in their own main areas while retaining the overall player interaction flow.
+- Layout authoring connected runtime construction to editable content and the level pipeline, then supported later player-blueprint work.
 - Catalogue selection, contextual controls and native validation connect through an explicit operation contract.
 - Crafting actions distinguish ongoing work, collectable output and recovery from unmet requirements.
 - Equipment-specific layout changes stay local, while storage and item selection reuse stable data and interaction conventions.
 
 ## Deeper reading
 
-For a walkthrough: **system and player journey → my work → placement or object interaction → design decisions and code**.
+For a walkthrough: **player journey → system responsibilities → one design decision → UI or runtime detail**.
 
 - **Start with the background:** [Feature, requirements and responsibilities](docs/CASE_STUDY.md#feature-background) · [C++ / Lua / UMG roles](docs/ARCHITECTURE.md#engineering-context).
+- **Whole-system design:** [Responsibilities and evolution](docs/SYSTEM_DESIGN.md) · [Early spatial rules and trade-offs](docs/SPATIAL_RULES.md).
+- **World and content:** [Lifecycles and LiteMass](docs/LIFECYCLE_AND_SCALE.md) · [Authoring workflow](docs/AUTHORING_WORKFLOW.md).
 - **Feature and architecture:** [Case study](docs/CASE_STUDY.md) · [Architecture](docs/ARCHITECTURE.md) · [Decision rationale](docs/DECISIONS.md).
 - **Implementation:** [Guided code tour](docs/CODE_TOUR.md) · [Workbench actions](docs/WORKBENCH_INTERACTIONS.md) · [Shared interactions](docs/SHARED_INTERACTIONS.md).
-- **Reliability and cost:** [Debugging](docs/DEBUGGING.md) · [Storage refresh costs](docs/PERFORMANCE.md).
+- **Reliability and cost:** [Debugging](docs/DEBUGGING.md) · [UI refresh and navigation costs](docs/PERFORMANCE.md).
 - **Verification:** [Focused tests — added for this portfolio](docs/TESTING.md).
 - **Evidence scope:** [Historical work, excerpts, tests and footage](docs/EVIDENCE.md).
 

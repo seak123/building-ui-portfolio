@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="850" viewBox="0 0 1400 850" role="img" aria-labelledby="title desc">
+  <title id="title">Early building model: spatial slots and one wall</title>
+  <desc id="desc">A conceptual SpaceUnit defines addressable corner, edge and face pivots and typed occupancy spaces. A wall requires a bottom edge pivot, provides a top edge pivot and two side-face pivots, and occupies a side-frame space. Dependencies, provider contributions and occupancy are separate records.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#576b80"/></marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #183247; }
+      .title { font-size: 34px; font-weight: 700; }
+      .heading { font-size: 27px; font-weight: 700; }
+      .body { font-size: 23px; }
+      .small { font-size: 21px; }
+      .muted { fill: #506478; }
+      .line { fill: none; stroke: #657c90; stroke-width: 3; }
+      .label { font-size: 23px; font-weight: 700; }
+    </style>
+  </defs>
+  <rect width="1400" height="850" fill="#ffffff"/>
+  <text x="44" y="58" class="title">Early building model: spatial slots + object contributions</text>
+  <text x="44" y="94" class="body muted">Reconstructed design illustration · early fixed-space version · schematic, not an engine capture</text>
+  <rect x="32" y="123" width="642" height="503" rx="16" fill="#f3f7fa"/>
+  <rect x="694" y="123" width="674" height="503" rx="16" fill="#f3f7fa"/>
+  <text x="55" y="165" class="heading">1. Space defines stable addresses</text>
+  <text x="55" y="200" class="body muted">Slots are logically locatable before a wall exists.</text>
+  <path d="M155 352 L420 352 L527 278 L262 278 Z" fill="#dae6ef" stroke="#657c90" stroke-width="3"/>
+  <path d="M155 352 L420 352 L420 440 L155 440 Z" fill="#f5d69e" stroke="#657c90" stroke-width="3"/>
+  <path d="M420 352 L527 278 L527 366 L420 440 Z" fill="#d0e1ee" stroke="#657c90" stroke-width="3"/>
+  <path d="M262 278 L262 366 L155 440 M262 366 L527 366" fill="none" stroke="#7e92a3" stroke-width="2" stroke-dasharray="8 7"/>
+  <circle cx="155" cy="352" r="9" fill="#8c53a5"/>
+  <circle cx="288" cy="352" r="9" fill="#1678a6"/>
+  <circle cx="288" cy="398" r="9" fill="#1678a6"/>
+  <circle cx="343" cy="315" r="9" fill="#1678a6"/>
+  <path d="M155 352 L86 301" class="line"/>
+  <text x="56" y="271" class="label">Corner Pivot</text>
+  <path d="M288 352 L288 238" class="line"/>
+  <text x="252" y="233" class="label">Edge Pivot</text>
+  <path d="M288 398 L288 480 L405 480" class="line"/>
+  <text x="410" y="488" class="label">Side-face Pivot</text>
+  <path d="M343 315 L450 243" class="line"/>
+  <text x="443" y="232" class="label">Face Pivot</text>
+  <text x="55" y="536" class="body">Pivots: positions for requirements and capabilities</text>
+  <text x="55" y="574" class="body">Spaces: typed occupancy for edges, faces or volume</text>
+  <text x="718" y="165" class="heading">2. A wall changes the state at those addresses</text>
+  <rect x="754" y="252" width="212" height="208" fill="#f8e2b5" stroke="#bf882b" stroke-width="3"/>
+  <path d="M754 252 L777 229 L989 229 L966 252 M966 252 L989 229 L989 437 L966 460" fill="#f1cb88" stroke="#bf882b" stroke-width="3"/>
+  <circle cx="860" cy="460" r="10" fill="#1678a6"/>
+  <circle cx="860" cy="241" r="10" fill="#238357"/>
+  <circle cx="860" cy="350" r="10" fill="#238357"/>
+  <path d="M875 241 L1014 241" class="line"/>
+  <path d="M875 350 L1014 350" class="line"/>
+  <path d="M875 460 L1014 460" class="line"/>
+  <text x="1026" y="229" class="label" style="fill:#238357">PROVIDES</text>
+  <text x="1026" y="263" class="body">Top Edge Pivot</text>
+  <text x="1026" y="332" class="label" style="fill:#238357">PROVIDES</text>
+  <text x="1026" y="366" class="body">Two side-face Pivots</text>
+  <text x="1026" y="397" class="small muted">One per face; callout simplified</text>
+  <text x="1026" y="448" class="label" style="fill:#1678a6">REQUIRES</text>
+  <text x="1026" y="482" class="body">Bottom Edge Pivot</text>
+  <text x="718" y="536" class="label" style="fill:#9b6713">OCCUPIES: SideFrameSpace</text>
+  <text x="718" y="574" class="body">Occupied space is separate from support capability.</text>
+  <rect x="32" y="650" width="1336" height="168" rx="16" fill="#eaf2f8"/>
+  <text x="55" y="690" class="heading">Placement and removal operate on explicit relationships</text>
+  <text x="55" y="730" class="body">Place: validate requirements and occupancy → register dependencies, providers and occupied spaces.</text>
+  <text x="55" y="767" class="body">Remove: inspect dependants and remaining providers → revoke contributions and update affected pieces.</text>
+  <text x="55" y="801" class="small muted">A slot's address, its occupancy and the capabilities supplied there are not one shared “active” flag.</text>
+</svg>
